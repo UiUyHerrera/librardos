@@ -1,10 +1,10 @@
-from datetime import time
+from datetime import datetime, time, timedelta
 
 import pytest
 from sqlalchemy import select
 
 from librardos.extensions import db
-from librardos.models import Business, Service, User
+from librardos.models import Booking, Business, Service, User
 
 USER_EMAIL = "owner@example.com"
 USER_PASSWORD = "correct-horse"
@@ -139,3 +139,43 @@ def test_owner_cannot_touch_another_owners_service(owner_client, business, other
     assert owner_client.get(f"/dashboard/services/{other_service.id}/edit").status_code == 404
     assert owner_client.post(f"/dashboard/services/{other_service.id}/toggle").status_code == 404
     assert other_service.is_active is True
+
+
+def test_delete_asks_for_confirmation_first(owner_client, service):
+    response = owner_client.get(f"/dashboard/services/{service.id}/delete")
+
+    assert response.status_code == 200
+    assert b"Delete Haircut?" in response.data
+    assert db.session.get(Service, service.id) is not None
+
+
+def test_delete_removes_the_service(owner_client, service):
+    service_id = service.id
+
+    response = owner_client.post(f"/dashboard/services/{service_id}/delete")
+
+    assert response.status_code == 302
+    assert db.session.get(Service, service_id) is None
+
+
+def test_service_with_bookings_cannot_be_deleted(owner_client, service):
+    start = datetime(2026, 10, 14, 13, 0)
+    booking = Booking(
+        business=service.business,
+        service=service,
+        customer_name="Sam Rivera",
+        customer_email="sam@example.com",
+        starts_at=start,
+        ends_at=start + timedelta(minutes=30),
+    )
+    db.session.add(booking)
+    db.session.commit()
+
+    owner_client.post(f"/dashboard/services/{service.id}/delete")
+
+    assert db.session.get(Service, service.id) is not None
+
+
+def test_owner_cannot_delete_another_owners_service(owner_client, business, other_service):
+    assert owner_client.post(f"/dashboard/services/{other_service.id}/delete").status_code == 404
+    assert db.session.get(Service, other_service.id) is not None

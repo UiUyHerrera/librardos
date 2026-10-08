@@ -1,5 +1,5 @@
 from babel.dates import get_day_names
-from flask import Blueprint, abort, flash, redirect, render_template, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_babel import format_currency, get_locale
 from flask_babel import gettext as _
 from flask_login import current_user, login_required
@@ -104,6 +104,23 @@ def toggle_service(service_id):
     else:
         flash(_("%(name)s is hidden from your booking page.", name=service.name))
     return redirect(url_for("dashboard.index"))
+
+
+@bp.route("/services/<int:service_id>/delete", methods=["GET", "POST"])
+@login_required
+def delete_service(service_id):
+    service = owned_service_or_404(service_id)
+    if service.bookings:
+        flash(_("%(name)s has bookings, so it can only be hidden.", name=service.name))
+        return redirect(url_for("dashboard.index"))
+
+    if request.method == "POST":
+        db.session.delete(service)
+        db.session.commit()
+        flash(_("%(name)s was deleted.", name=service.name))
+        return redirect(url_for("dashboard.index"))
+
+    return render_template("dashboard/delete_service.html", service=service)
 
 
 def business_or_404():

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("Delete service") }} | Librardos{% endblock %}
+
+{% block content %}
+<section class="message-page">
+  <h1>{{ _("Delete %(name)s?", name=service.name) }}</h1>
+  <p>{{ _("This cannot be undone.") }}</p>
+  <form class="form-actions" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="button button-danger" type="submit">{{ _("Delete service") }}</button>
+    <a href="{{ url_for('dashboard.index') }}">{{ _("Cancel") }}</a>
+  </form>
+</section>
+{% endblock %}

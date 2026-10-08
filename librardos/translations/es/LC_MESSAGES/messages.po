@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Librardos 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 14:50-0300\n"
+"POT-Creation-Date: 2026-10-08 14:57-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Librardos\n"
 "Language: es\n"
@@ -66,6 +66,14 @@ msgstr "%(name)s se puede reservar otra vez."
 #, python-format
 msgid "%(name)s is hidden from your booking page."
 msgstr "%(name)s ya no aparece en tu página de reservas."
+
+#, python-format
+msgid "%(name)s has bookings, so it can only be hidden."
+msgstr "%(name)s tiene reservas, así que solo se puede ocultar."
+
+#, python-format
+msgid "%(name)s was deleted."
+msgstr "%(name)s fue eliminado."
 
 msgid "This address is already taken."
 msgstr "Esta dirección ya está en uso."
@@ -255,6 +263,16 @@ msgstr "tu-negocio"
 msgid "Cancel"
 msgstr "Cancelar"
 
+msgid "Delete service"
+msgstr "Eliminar servicio"
+
+#, python-format
+msgid "Delete %(name)s?"
+msgstr "¿Eliminar %(name)s?"
+
+msgid "This cannot be undone."
+msgstr "Esto no se puede deshacer."
+
 msgid "Your booking page"
 msgstr "Tu página de reservas"
 
@@ -294,6 +312,13 @@ msgstr "Mostrar %(name)s"
 
 msgid "Show"
 msgstr "Mostrar"
+
+#, python-format
+msgid "Delete %(name)s"
+msgstr "Eliminar %(name)s"
+
+msgid "Delete"
+msgstr "Eliminar"
 
 msgid "Add your first service so clients have something to book."
 msgstr "Agrega tu primer servicio para que tus clientes tengan algo que reservar."

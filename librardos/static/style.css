@@ -693,3 +693,8 @@ h3 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+.button-danger {
+  background: var(--danger);
+  color: var(--paper);
+}

@@ -59,6 +59,7 @@
             <button class="link-button" type="submit" aria-label="{{ _('Show %(name)s', name=service.name) }}">{{ _("Show") }}</button>
             {% endif %}
           </form>
+          <a href="{{ url_for('dashboard.delete_service', service_id=service.id) }}" aria-label="{{ _('Delete %(name)s', name=service.name) }}">{{ _("Delete") }}</a>
         </div>
       </li>
       {% endfor %}
