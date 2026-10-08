@@ -12,6 +12,7 @@ from wtforms import (
     EmailField,
     IntegerField,
     PasswordField,
+    RadioField,
     SelectField,
     SelectMultipleField,
     StringField,
@@ -139,4 +140,14 @@ class ServiceForm(FlaskForm):
         places=2,
         widget=NumberInput(min=0, step="0.01"),
         validators=[InputRequired(), NumberRange(min=0, max=100000)],
+    )
+
+
+class BookingForm(FlaskForm):
+    slot = RadioField(_l("Time"), validators=[DataRequired(message=_l("Pick a time."))])
+    customer_name = StringField(_l("Your name"), validators=[DataRequired(), Length(max=100)])
+    customer_email = EmailField(
+        _l("Your email"),
+        filters=[normalize_email],
+        validators=[DataRequired(), Email(), Length(max=255)],
     )

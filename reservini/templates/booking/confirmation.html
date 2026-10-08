@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("You are booked") }} | {{ business.name }}{% endblock %}
+
+{% block content %}
+<section class="message-page">
+  <h1>{{ _("You are booked") }}</h1>
+  <p>{{ _("%(service)s at %(business)s", service=booking.service.name, business=business.name) }}</p>
+  <p class="booking-time">{{ booking.starts_at|local_time(business) }}</p>
+  <p class="field-hint">{{ _("Time zone: %(zone)s", zone=business.timezone) }}</p>
+  <a class="button button-secondary" href="{{ url_for('booking.business_page', slug=business.slug) }}">{{ _("Book something else") }}</a>
+</section>
+{% endblock %}

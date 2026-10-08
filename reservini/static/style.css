@@ -845,3 +845,82 @@ h3 {
     display: none;
   }
 }
+
+.booking-page {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 44rem;
+  padding-block: 2.5rem 5rem;
+}
+
+.booking-page h1 {
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1.05;
+}
+
+.back-link {
+  justify-self: start;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.day-list,
+.slot-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.day-list a,
+.slot {
+  position: relative;
+  padding: 0.5rem 0.875rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.day-list a:hover,
+.slot:hover {
+  border-color: var(--muted);
+}
+
+.day-list a[aria-current="date"],
+.slot:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.slot input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slot:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.slot-picker {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.slot-picker legend {
+  margin-bottom: 0.75rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+.booking-time {
+  font-size: 1.375rem;
+  font-weight: 700;
+}

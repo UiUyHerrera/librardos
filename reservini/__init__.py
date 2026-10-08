@@ -1,6 +1,7 @@
 from flask import Flask
 
 from reservini.auth import bp as auth_bp
+from reservini.booking import bp as booking_bp
 from reservini.config import Config
 from reservini.dashboard import bp as dashboard_bp
 from reservini.database import init_db_command
@@ -30,6 +31,7 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(booking_bp)
     app.register_blueprint(language_bp)
     app.register_blueprint(theme_bp)
     app.register_blueprint(errors_bp)

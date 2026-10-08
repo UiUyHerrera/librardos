@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_form.html" import field %}
+
+{% block title %}{{ service.name }} | {{ business.name }}{% endblock %}
+
+{% block content %}
+<section class="booking-page">
+  <a class="back-link" href="{{ url_for('booking.business_page', slug=business.slug) }}">{{ business.name }}</a>
+  <h1>{{ service.name }}</h1>
+  <p class="lead">{{ _("%(minutes)d min", minutes=service.duration_minutes) }}, {{ service.price|money(business.currency) }}</p>
+
+  <nav class="day-list" aria-label="{{ _('Pick a day') }}">
+    {% for day in days %}
+    <a href="{{ url_for('booking.book_service', slug=business.slug, service_id=service.id, day=day.isoformat()) }}"{% if day == selected_day %} aria-current="date"{% endif %}>{{ day|day_label }}</a>
+    {% endfor %}
+  </nav>
+
+  {% if form.slot.choices %}
+  <form class="form" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <fieldset class="slot-picker">
+      <legend>{{ _("Pick a time") }}</legend>
+      <div class="slot-options">
+        {% for option in form.slot %}
+        <label class="slot">{{ option() }} {{ option.label.text }}</label>
+        {% endfor %}
+      </div>
+      {% if form.slot.errors %}
+      <p class="field-error">{{ form.slot.errors[0] }}</p>
+      {% endif %}
+    </fieldset>
+    {{ field(form.customer_name, "name") }}
+    {{ field(form.customer_email, "email") }}
+    <button class="button" type="submit">{{ _("Confirm booking") }}</button>
+  </form>
+  {% else %}
+  <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>
+  {% endif %}
+</section>
+{% endblock %}

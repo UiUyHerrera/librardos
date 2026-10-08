@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 15:28-0300\n"
+"POT-Creation-Date: 2026-10-08 15:37-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -25,6 +25,9 @@ msgstr "Correo o contraseña incorrectos."
 
 msgid "You have logged out."
 msgstr "Cerraste sesión."
+
+msgid "Someone just took that time. Pick another one."
+msgstr "Alguien acaba de tomar esa hora. Elige otra."
 
 msgid "Your business is ready. Now add the services you offer."
 msgstr "Tu negocio está listo. Ahora agrega los servicios que ofreces."
@@ -157,6 +160,18 @@ msgstr "Duración en minutos"
 msgid "Price"
 msgstr "Precio"
 
+msgid "Time"
+msgstr "Hora"
+
+msgid "Pick a time."
+msgstr "Elige una hora."
+
+msgid "Your name"
+msgstr "Tu nombre"
+
+msgid "Your email"
+msgstr "Tu correo electrónico"
+
 msgid "Reservini gives small businesses a booking page where clients pick a free time."
 msgstr "Reservini le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
 
@@ -260,6 +275,49 @@ msgid "Already have an account?"
 msgstr "¿Ya tienes cuenta?"
 
 #, python-format
+msgid "%(minutes)d min"
+msgstr "%(minutes)d min"
+
+msgid "Pick a day"
+msgstr "Elige un día"
+
+msgid "Pick a time"
+msgstr "Elige una hora"
+
+msgid "Confirm booking"
+msgstr "Confirmar reserva"
+
+msgid "No free times this day. Try another day."
+msgstr "No hay horas libres este día. Prueba otro día."
+
+msgid "Pick a service to see the free times."
+msgstr "Elige un servicio para ver las horas libres."
+
+#, python-format
+msgid "Book %(name)s"
+msgstr "Reservar %(name)s"
+
+msgid "Book"
+msgstr "Reservar"
+
+msgid "This business has no services to book yet."
+msgstr "Este negocio todavía no tiene servicios para reservar."
+
+msgid "You are booked"
+msgstr "Tu reserva está lista"
+
+#, python-format
+msgid "%(service)s at %(business)s"
+msgstr "%(service)s en %(business)s"
+
+#, python-format
+msgid "Time zone: %(zone)s"
+msgstr "Zona horaria: %(zone)s"
+
+msgid "Book something else"
+msgstr "Reservar otra cosa"
+
+#, python-format
 msgid "Clients will book at %(address)s"
 msgstr "Tus clientes reservarán en %(address)s"
 
@@ -290,10 +348,6 @@ msgstr "Horario"
 
 msgid "Services"
 msgstr "Servicios"
-
-#, python-format
-msgid "%(minutes)d min"
-msgstr "%(minutes)d min"
 
 msgid "Hidden"
 msgstr "Oculto"

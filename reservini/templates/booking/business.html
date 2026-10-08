@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ business.name }}{% endblock %}
+
+{% block content %}
+<section class="booking-page">
+  <h1>{{ business.name }}</h1>
+  <p class="lead">{{ _("Pick a service to see the free times.") }}</p>
+
+  {% if services %}
+  <ul class="service-list">
+    {% for service in services %}
+    <li class="service-row">
+      <div class="service-info">
+        <strong>{{ service.name }}</strong>
+        <span>{{ _("%(minutes)d min", minutes=service.duration_minutes) }}</span>
+        <span>{{ service.price|money(business.currency) }}</span>
+      </div>
+      <a class="button button-small" href="{{ url_for('booking.book_service', slug=business.slug, service_id=service.id) }}" aria-label="{{ _('Book %(name)s', name=service.name) }}">{{ _("Book") }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-state">{{ _("This business has no services to book yet.") }}</p>
+  {% endif %}
+</section>
+{% endblock %}

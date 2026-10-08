@@ -7,7 +7,7 @@
   <div class="dashboard-header">
     <div class="dashboard-title">
       <h1>{{ business.name }}</h1>
-      <p class="booking-address">{{ _("Your booking page") }}: <strong>{{ request.url_root }}b/{{ business.slug }}</strong></p>
+      <p class="booking-address">{{ _("Your booking page") }}: <a href="{{ url_for('booking.business_page', slug=business.slug) }}">{{ url_for('booking.business_page', slug=business.slug, _external=True) }}</a></p>
     </div>
     <a class="button button-secondary" href="{{ url_for('dashboard.edit_business') }}">{{ _("Edit business") }}</a>
   </div>
