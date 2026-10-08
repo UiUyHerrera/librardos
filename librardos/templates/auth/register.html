@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_form.html" import field %}
+
+{% block title %}{{ _("Sign up") }} | Librardos{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <h1>{{ _("Create your account") }}</h1>
+
+  <form class="form" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.email, "email") }}
+    {{ field(form.password, "new-password") }}
+    {{ field(form.confirm_password, "new-password") }}
+    <button class="button" type="submit">{{ _("Create account") }}</button>
+  </form>
+
+  <p class="auth-switch">{{ _("Already have an account?") }} <a href="{{ url_for('auth.login') }}">{{ _("Log in") }}</a></p>
+</section>
+{% endblock %}

@@ -1,8 +1,10 @@
 import enum
 from datetime import UTC, datetime, time
 
+from flask_login import UserMixin
 from sqlalchemy import CheckConstraint, ForeignKey, Index, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from librardos.extensions import db
 
@@ -21,7 +23,7 @@ class BookingStatus(enum.StrEnum):
     CANCELLED = "cancelled"
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -30,6 +32,12 @@ class User(db.Model):
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
 
     business: Mapped["Business | None"] = relationship(back_populates="owner")
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Business(db.Model):

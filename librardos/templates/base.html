@@ -15,19 +15,40 @@
 
   <header class="site-header">
     <a class="wordmark" href="{{ url_for('main.index') }}">Librardos</a>
-    <nav class="language-switch" aria-label="{{ _('Language') }}">
-      {% for code, name in config.LANGUAGES.items() if code != current_language %}
-      <a href="{{ url_for('language.change_language', code=code, next=request.path) }}" lang="{{ code }}" hreflang="{{ code }}">{{ name }}</a>
-      {% endfor %}
+    <nav class="account-nav" aria-label="{{ _('Account') }}">
+      {% if current_user.is_authenticated %}
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="link-button" type="submit">{{ _("Log out") }}</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}">{{ _("Log in") }}</a>
+      <a class="button button-small" href="{{ url_for('auth.register') }}">{{ _("Sign up") }}</a>
+      {% endif %}
     </nav>
   </header>
 
   <main id="content">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages" role="status">
+      {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
   </main>
 
   <footer class="site-footer">
     <p>{{ _("Librardos is a booking tool for small businesses.") }}</p>
+    <nav class="language-switch" aria-label="{{ _('Language') }}">
+      {% for code, name in config.LANGUAGES.items() if code != current_language %}
+      <a href="{{ url_for('language.change_language', code=code, next=request.path) }}" lang="{{ code }}" hreflang="{{ code }}">{{ name }}</a>
+      {% endfor %}
+    </nav>
   </footer>
 </body>
 </html>

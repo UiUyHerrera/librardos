@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Librardos\n"
+"Project-Id-Version: Librardos 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 14:09-0300\n"
-"PO-Revision-Date: 2026-10-08 14:10-0300\n"
+"POT-Creation-Date: 2026-10-08 14:36-0300\n"
+"PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Librardos\n"
 "Language: es\n"
 "Language-Team: Librardos\n"
@@ -14,23 +14,93 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
+msgid "An account with this email already exists."
+msgstr "Ya existe una cuenta con este correo."
+
+msgid "Your account is ready."
+msgstr "Tu cuenta está lista."
+
+msgid "Wrong email or password."
+msgstr "Correo o contraseña incorrectos."
+
+msgid "You have logged out."
+msgstr "Cerraste sesión."
+
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+msgid "Check the address or go back to the home page."
+msgstr "Revisa la dirección o vuelve al inicio."
+
+msgid "Too many attempts"
+msgstr "Demasiados intentos"
+
+msgid "Wait a minute and try again."
+msgstr "Espera un minuto y vuelve a intentarlo."
+
+msgid "The form expired"
+msgstr "El formulario expiró"
+
+msgid "Reload the page and try again."
+msgstr "Recarga la página y vuelve a intentarlo."
+
+msgid "Log in to see this page."
+msgstr "Inicia sesión para ver esta página."
+
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgid "Password"
+msgstr "Contraseña"
+
+#, python-format
+msgid "Use between %(min)d and %(max)d characters."
+msgstr "Usa entre %(min)d y %(max)d caracteres."
+
+msgid "Repeat password"
+msgstr "Repite la contraseña"
+
+msgid "Passwords do not match."
+msgstr "Las contraseñas no coinciden."
+
+msgid "Keep me logged in"
+msgstr "Mantener la sesión iniciada"
+
 msgid "Librardos gives small businesses a booking page where clients pick a free time."
 msgstr "Librardos le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
 
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 
-msgid "Language"
-msgstr "Idioma"
+msgid "Account"
+msgstr "Cuenta"
+
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+msgid "Sign up"
+msgstr "Crear cuenta"
 
 msgid "Librardos is a booking tool for small businesses."
 msgstr "Librardos es una herramienta de reservas para negocios pequeños."
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Go to the home page"
+msgstr "Ir al inicio"
 
 msgid "Your clients book on their own"
 msgstr "Tus clientes reservan solos"
 
 msgid "Librardos gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule."
 msgstr "Librardos le da a tu negocio una página de reservas con tus servicios y tu horario. Tus clientes eligen una hora libre y la cita aparece en tu agenda."
+
+msgid "Create your booking page"
+msgstr "Crea tu página de reservas"
 
 msgid "Example schedule for one morning with three booked appointments and three open slots"
 msgstr "Ejemplo de agenda de una mañana con tres citas reservadas y tres horarios libres"
@@ -70,4 +140,22 @@ msgstr "Comparte tu enlace"
 
 msgid "Clients book from your page, and each time slot can only be taken once."
 msgstr "Tus clientes reservan desde tu página y cada horario se puede tomar una sola vez."
+
+msgid "Log in to Librardos"
+msgstr "Inicia sesión en Librardos"
+
+msgid "New to Librardos?"
+msgstr "¿Nuevo en Librardos?"
+
+msgid "Create an account"
+msgstr "Crea una cuenta"
+
+msgid "Create your account"
+msgstr "Crea tu cuenta"
+
+msgid "Create account"
+msgstr "Crear cuenta"
+
+msgid "Already have an account?"
+msgstr "¿Ya tienes cuenta?"
 

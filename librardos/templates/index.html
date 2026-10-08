@@ -5,6 +5,9 @@
   <div class="hero-text">
     <h1>{{ _("Your clients book on their own") }}</h1>
     <p class="lead">{{ _("Librardos gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule.") }}</p>
+    {% if not current_user.is_authenticated %}
+    <a class="button" href="{{ url_for('auth.register') }}">{{ _("Create your booking page") }}</a>
+    {% endif %}
   </div>
 
   <div class="day" role="img" aria-label="{{ _('Example schedule for one morning with three booked appointments and three open slots') }}">
