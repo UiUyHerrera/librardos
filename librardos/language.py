@@ -1,0 +1,46 @@
+import re
+
+from flask import Blueprint, abort, current_app, redirect, request, url_for
+from flask_babel import get_locale
+
+bp = Blueprint("language", __name__)
+
+LANGUAGE_COOKIE = "language"
+ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365
+SAFE_PATH = re.compile(r"/(?![/\\])[^\s\\]*")
+
+
+def select_locale():
+    languages = current_app.config["LANGUAGES"]
+    language = request.cookies.get(LANGUAGE_COOKIE)
+    if language in languages:
+        return language
+    return request.accept_languages.best_match(list(languages))
+
+
+@bp.app_context_processor
+def inject_current_language():
+    return {"current_language": str(get_locale())}
+
+
+@bp.get("/language/<code>")
+def change_language(code):
+    if code not in current_app.config["LANGUAGES"]:
+        abort(404)
+
+    response = redirect(safe_next_url(request.args.get("next")))
+    response.set_cookie(
+        LANGUAGE_COOKIE,
+        code,
+        max_age=ONE_YEAR_IN_SECONDS,
+        httponly=True,
+        samesite="Lax",
+        secure=request.is_secure,
+    )
+    return response
+
+
+def safe_next_url(next_url):
+    if next_url and SAFE_PATH.fullmatch(next_url):
+        return next_url
+    return url_for("main.index")

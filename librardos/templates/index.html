@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <h1>{{ _("Your clients book on their own") }}</h1>
+    <p class="lead">{{ _("Librardos gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule.") }}</p>
+  </div>
+
+  <div class="day" role="img" aria-label="{{ _('Example schedule for one morning with three booked appointments and three open slots') }}">
+    <div class="day-header">
+      <span class="day-name">{{ _("Tuesday") }}</span>
+      <span class="day-number">14</span>
+    </div>
+
+    <div class="day-grid">
+      <span class="time row-1">9:00</span>
+      <span class="time row-2">9:30</span>
+      <span class="time row-3">10:00</span>
+      <span class="time row-4">10:30</span>
+      <span class="time row-5">11:00</span>
+      <span class="time row-6">11:30</span>
+      <span class="time row-7">12:00</span>
+      <span class="time row-8">12:30</span>
+
+      <span class="appointment haircut row-1">
+        <strong>{{ _("Haircut") }}</strong>
+        <span>Sam Rivera</span>
+      </span>
+      <span class="opening row-2">{{ _("Open") }}</span>
+      <span class="appointment cut-and-color row-3 length-3">
+        <strong>{{ _("Cut and color") }}</strong>
+        <span>Priya Shah</span>
+      </span>
+      <span class="opening row-6">{{ _("Open") }}</span>
+      <span class="appointment beard-trim row-7">
+        <strong>{{ _("Beard trim") }}</strong>
+        <span>Mateo Gil</span>
+      </span>
+      <span class="opening row-8">{{ _("Open") }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works" aria-labelledby="how-it-works-title">
+  <h2 id="how-it-works-title">{{ _("How it works") }}</h2>
+  <ol class="steps">
+    <li>
+      <h3>{{ _("Add your services") }}</h3>
+      <p>{{ _("Give each service a name, a length and a price.") }}</p>
+    </li>
+    <li>
+      <h3>{{ _("Set your hours") }}</h3>
+      <p>{{ _("Choose when you open and when you close.") }}</p>
+    </li>
+    <li>
+      <h3>{{ _("Share your link") }}</h3>
+      <p>{{ _("Clients book from your page, and each time slot can only be taken once.") }}</p>
+    </li>
+  </ol>
+</section>
+{% endblock %}

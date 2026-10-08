@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="{{ current_language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Librardos{% endblock %}</title>
+  <meta name="description" content="{{ _('Librardos gives small businesses a booking page where clients pick a free time.') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#content">{{ _("Skip to content") }}</a>
+
+  <header class="site-header">
+    <a class="wordmark" href="{{ url_for('main.index') }}">Librardos</a>
+    <nav class="language-switch" aria-label="{{ _('Language') }}">
+      {% for code, name in config.LANGUAGES.items() if code != current_language %}
+      <a href="{{ url_for('language.change_language', code=code, next=request.path) }}" lang="{{ code }}" hreflang="{{ code }}">{{ name }}</a>
+      {% endfor %}
+    </nav>
+  </header>
+
+  <main id="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>{{ _("Librardos is a booking tool for small businesses.") }}</p>
+  </footer>
+</body>
+</html>

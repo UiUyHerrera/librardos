@@ -1,0 +1,73 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Librardos\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-08 14:09-0300\n"
+"PO-Revision-Date: 2026-10-08 14:10-0300\n"
+"Last-Translator: Librardos\n"
+"Language: es\n"
+"Language-Team: Librardos\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "Librardos gives small businesses a booking page where clients pick a free time."
+msgstr "Librardos le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
+
+msgid "Skip to content"
+msgstr "Saltar al contenido"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Librardos is a booking tool for small businesses."
+msgstr "Librardos es una herramienta de reservas para negocios pequeños."
+
+msgid "Your clients book on their own"
+msgstr "Tus clientes reservan solos"
+
+msgid "Librardos gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule."
+msgstr "Librardos le da a tu negocio una página de reservas con tus servicios y tu horario. Tus clientes eligen una hora libre y la cita aparece en tu agenda."
+
+msgid "Example schedule for one morning with three booked appointments and three open slots"
+msgstr "Ejemplo de agenda de una mañana con tres citas reservadas y tres horarios libres"
+
+msgid "Tuesday"
+msgstr "Martes"
+
+msgid "Haircut"
+msgstr "Corte de pelo"
+
+msgid "Open"
+msgstr "Libre"
+
+msgid "Cut and color"
+msgstr "Corte y color"
+
+msgid "Beard trim"
+msgstr "Arreglo de barba"
+
+msgid "How it works"
+msgstr "Cómo funciona"
+
+msgid "Add your services"
+msgstr "Agrega tus servicios"
+
+msgid "Give each service a name, a length and a price."
+msgstr "Ponle a cada servicio un nombre, una duración y un precio."
+
+msgid "Set your hours"
+msgstr "Define tu horario"
+
+msgid "Choose when you open and when you close."
+msgstr "Elige a qué hora abres y a qué hora cierras."
+
+msgid "Share your link"
+msgstr "Comparte tu enlace"
+
+msgid "Clients book from your page, and each time slot can only be taken once."
+msgstr "Tus clientes reservan desde tu página y cada horario se puede tomar una sola vez."
+
