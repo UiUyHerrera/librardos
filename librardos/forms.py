@@ -46,6 +46,11 @@ def normalize_slug(value):
     return value.strip().lower() if value else value
 
 
+def currency_label(code, locale):
+    name = get_currency_name(code, locale=locale)
+    return f"{name[:1].upper()}{name[1:]} ({code})"
+
+
 class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
     option_widget = CheckboxInput()
@@ -114,7 +119,7 @@ class BusinessForm(FlaskForm):
         locale = get_locale()
         day_names = get_day_names("wide", locale=locale)
         self.timezone.choices = ["UTC", *TIMEZONES]
-        self.currency.choices = [(code, f"{get_currency_name(code, locale=locale)} ({code})") for code in CURRENCIES]
+        self.currency.choices = [(code, currency_label(code, locale)) for code in CURRENCIES]
         self.open_weekdays.choices = [(day, day_names[day].capitalize()) for day in range(7)]
 
     def validate_closes_at(self, field):

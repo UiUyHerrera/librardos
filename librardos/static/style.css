@@ -698,3 +698,90 @@ h3 {
   background: var(--danger);
   color: var(--paper);
 }
+
+.field select {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.375rem) 50%,
+    calc(100% - 1rem) 50%;
+  background-size: 0.375rem 0.375rem;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.field select:hover {
+  border-color: var(--muted);
+}
+
+.field select:focus-visible {
+  border-color: var(--teal);
+  outline-offset: 1px;
+}
+
+.field select option {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.field input[type="number"],
+.field input[type="time"] {
+  font-variant-numeric: tabular-nums;
+}
+
+.field input[type="number"] {
+  appearance: textfield;
+}
+
+.field input[type="number"]::-webkit-inner-spin-button,
+.field input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.field input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.field input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.day-options {
+  gap: 0.5rem;
+}
+
+.day-options .checkbox {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.day-options .checkbox:hover {
+  border-color: var(--muted);
+}
+
+.day-options .checkbox input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.day-options .checkbox:has(input:checked) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.day-options .checkbox:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
