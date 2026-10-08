@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 15:01-0300\n"
+"POT-Creation-Date: 2026-10-08 15:28-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -183,6 +183,12 @@ msgstr "Reservini es una herramienta de reservas para negocios pequeños."
 
 msgid "Language"
 msgstr "Idioma"
+
+msgid "Dark mode"
+msgstr "Modo oscuro"
+
+msgid "Light mode"
+msgstr "Modo claro"
 
 msgid "Go to the home page"
 msgstr "Ir al inicio"

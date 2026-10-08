@@ -1,16 +1,16 @@
 :root {
-  color-scheme: light dark;
-  --paper: #f1f4ef;
-  --surface: #ffffff;
-  --ink: #17241f;
-  --muted: #4f5d57;
-  --line: #c9d2cc;
-  --teal: #1d6b5b;
-  --on-teal: #ffffff;
+  color-scheme: light;
+  --paper: #e6e7e9;
+  --surface: #f5f5f6;
+  --ink: #1a1b1e;
+  --muted: #53565c;
+  --line: #c4c6ca;
+  --accent: #26282c;
+  --on-accent: #ffffff;
   --marigold: #e8a92c;
   --sky: #9cc7d9;
-  --on-light-block: #17241f;
-  --focus: #1d6b5b;
+  --on-light-block: #1a1b1e;
+  --focus: #1a1b1e;
   --danger: #b42318;
   --page-width: 72rem;
   --gutter: 1.25rem;
@@ -18,19 +18,33 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #111a16;
-    --surface: #18231e;
-    --ink: #e3eae5;
-    --muted: #a3b1aa;
-    --line: #2b3833;
-    --teal: #4fb79e;
-    --on-teal: #0f1a16;
-    --marigold: #e8a92c;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #151618;
+    --surface: #1f2023;
+    --ink: #e8e9eb;
+    --muted: #a3a6ac;
+    --line: #35383d;
+    --accent: #e8e9eb;
+    --on-accent: #151618;
     --sky: #7fb3c8;
-    --focus: #8fd8c5;
+    --focus: #e8e9eb;
     --danger: #ff8f80;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #151618;
+  --surface: #1f2023;
+  --ink: #e8e9eb;
+  --muted: #a3a6ac;
+  --line: #35383d;
+  --accent: #e8e9eb;
+  --on-accent: #151618;
+  --sky: #7fb3c8;
+  --focus: #e8e9eb;
+  --danger: #ff8f80;
 }
 
 *,
@@ -211,8 +225,8 @@ h1 {
 }
 
 .haircut {
-  background: var(--teal);
-  color: var(--on-teal);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .cut-and-color {
@@ -282,7 +296,7 @@ h2 {
 
 .steps li::before {
   content: counter(step);
-  color: var(--teal);
+  color: var(--accent);
   font-size: 3rem;
   font-weight: 800;
   font-stretch: 125%;
@@ -363,10 +377,10 @@ h3 {
   justify-self: start;
   min-height: 3rem;
   padding: 0.75rem 1.5rem;
-  background: var(--teal);
+  background: var(--accent);
   border: 0;
   border-radius: 999px;
-  color: var(--on-teal);
+  color: var(--on-accent);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -396,7 +410,7 @@ h3 {
   padding: 0.875rem 1.125rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--teal);
+  border-left: 4px solid var(--accent);
   border-radius: 8px;
 }
 
@@ -444,7 +458,7 @@ h3 {
 }
 
 .field input:focus-visible {
-  border-color: var(--teal);
+  border-color: var(--accent);
   outline-offset: 1px;
 }
 
@@ -475,7 +489,7 @@ h3 {
   width: 1.25rem;
   height: 1.25rem;
   margin: 0;
-  accent-color: var(--teal);
+  accent-color: var(--accent);
 }
 
 .auth-switch {
@@ -718,7 +732,7 @@ h3 {
 }
 
 .field select:focus-visible {
-  border-color: var(--teal);
+  border-color: var(--accent);
   outline-offset: 1px;
 }
 
@@ -784,4 +798,50 @@ h3 {
 .day-options .checkbox:has(input:focus-visible) {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+.preferences {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  color: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.theme-switch:hover {
+  border-color: var(--ink);
+}
+
+.theme-to-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-to-light {
+  display: inline-flex;
+}
+
+:root[data-theme="dark"] .theme-to-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-to-light {
+    display: inline-flex;
+  }
+
+  :root:not([data-theme="light"]) .theme-to-dark {
+    display: none;
+  }
 }

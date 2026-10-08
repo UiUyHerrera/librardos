@@ -1,12 +1,12 @@
 from flask import Blueprint, abort, current_app, redirect, request, url_for
 from flask_babel import get_locale
 
+from reservini.preferences import remember_preference
 from reservini.security import safe_next_url
 
 bp = Blueprint("language", __name__)
 
 LANGUAGE_COOKIE = "language"
-ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365
 
 
 def select_locale():
@@ -28,12 +28,4 @@ def change_language(code):
         abort(404)
 
     response = redirect(safe_next_url(request.args.get("next"), url_for("main.index")))
-    response.set_cookie(
-        LANGUAGE_COOKIE,
-        code,
-        max_age=ONE_YEAR_IN_SECONDS,
-        httponly=True,
-        samesite="Lax",
-        secure=request.is_secure,
-    )
-    return response
+    return remember_preference(response, LANGUAGE_COOKIE, code)

@@ -11,6 +11,7 @@ from reservini.language import select_locale
 from reservini.main import bp as main_bp
 from reservini.models import Booking, Business, Service, User
 from reservini.security import add_security_headers
+from reservini.theme import bp as theme_bp
 
 
 def create_app(config_class=Config):
@@ -30,6 +31,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(language_bp)
+    app.register_blueprint(theme_bp)
     app.register_blueprint(errors_bp)
     app.after_request(add_security_headers)
     app.shell_context_processor(make_shell_context)
