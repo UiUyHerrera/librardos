@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 15:37-0300\n"
+"POT-Creation-Date: 2026-10-08 15:54-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -136,20 +136,11 @@ msgstr "Zona horaria"
 msgid "Currency"
 msgstr "Moneda"
 
-msgid "Opens at"
-msgstr "Abre a las"
+msgid "Check the opening hours."
+msgstr "Revisa el horario de atención."
 
-msgid "Closes at"
-msgstr "Cierra a las"
-
-msgid "Open days"
-msgstr "Días de atención"
-
-msgid "Pick at least one day."
-msgstr "Elige al menos un día."
-
-msgid "Closing time must be after opening time."
-msgstr "La hora de cierre debe ser después de la de apertura."
+msgid "Add opening hours for at least one day."
+msgstr "Agrega horario de atención en al menos un día."
 
 msgid "Service name"
 msgstr "Nombre del servicio"
@@ -171,6 +162,18 @@ msgstr "Tu nombre"
 
 msgid "Your email"
 msgstr "Tu correo electrónico"
+
+msgid "Write hours like 09:00-13:00, 15:00-19:00."
+msgstr "Escribe el horario así: 09:00-13:00, 15:00-19:00."
+
+msgid "Closing time must be after opening time."
+msgstr "La hora de cierre debe ser después de la de apertura."
+
+msgid "Opening hours on the same day cannot overlap."
+msgstr "Los bloques de un mismo día no pueden cruzarse."
+
+msgid "Use times on the hour or half hour, up to 23:30."
+msgstr "Usa horas en punto o y media, hasta las 23:30."
 
 msgid "Reservini gives small businesses a booking page where clients pick a free time."
 msgstr "Reservini le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
@@ -284,6 +287,12 @@ msgstr "Elige un día"
 msgid "Pick a time"
 msgstr "Elige una hora"
 
+msgid "Booked"
+msgstr "Reservado"
+
+msgid "Closed"
+msgstr "Cerrado"
+
 msgid "Confirm booking"
 msgstr "Confirmar reserva"
 
@@ -324,6 +333,21 @@ msgstr "Tus clientes reservarán en %(address)s"
 msgid "your-business"
 msgstr "tu-negocio"
 
+msgid "Opening hours"
+msgstr "Horario de atención"
+
+msgid "Remove"
+msgstr "Quitar"
+
+msgid "Drag down on a day to add hours. Drag a block to move it, pull its bottom edge to resize it, or press × to remove it."
+msgstr "Arrastra hacia abajo en un día para agregar horas. Arrastra un bloque para moverlo, tira de su borde inferior para cambiar su largo o toca × para quitarlo."
+
+msgid "Edit as text"
+msgstr "Editar como texto"
+
+msgid "Write hours like 09:00-13:00, 15:00-19:00. Leave a day empty if you are closed."
+msgstr "Escribe el horario así: 09:00-13:00, 15:00-19:00. Deja vacío el día que no abres."
+
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -342,9 +366,6 @@ msgstr "Tu página de reservas"
 
 msgid "Edit business"
 msgstr "Editar negocio"
-
-msgid "Hours"
-msgstr "Horario"
 
 msgid "Services"
 msgstr "Servicios"

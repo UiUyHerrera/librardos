@@ -23,6 +23,11 @@ def day_names(days):
     return ", ".join(names[day].capitalize() for day in days)
 
 
+@bp.app_template_filter("hours_text")
+def hours_text(ranges):
+    return ", ".join(f"{opens:%H:%M}–{closes:%H:%M}" for opens, closes in ranges)
+
+
 @bp.get("/")
 @login_required
 def index():
@@ -41,7 +46,7 @@ def create_business():
     form = BusinessForm()
     if form.validate_on_submit():
         business = Business(owner=current_user)
-        form.populate_obj(business)
+        form.apply_to(business)
         if save_business(business, form):
             flash(_("Your business is ready. Now add the services you offer."))
             return redirect(url_for("dashboard.index"))
@@ -53,9 +58,9 @@ def create_business():
 @login_required
 def edit_business():
     business = business_or_404()
-    form = BusinessForm(obj=business)
+    form = BusinessForm(obj=business, business=business)
     if form.validate_on_submit():
-        form.populate_obj(business)
+        form.apply_to(business)
         if save_business(business, form):
             flash(_("Business details saved."))
             return redirect(url_for("dashboard.index"))

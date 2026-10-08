@@ -12,9 +12,13 @@ USER_PASSWORD = "correct-horse"
 BUSINESS_DATA = {
     "name": "North Side Barbers",
     "slug": "north-side",
-    "opens_at": "09:00",
-    "closes_at": "18:00",
-    "open_weekdays": ["0", "2", "4"],
+    "hours-0": "09:00-13:00, 15:00-19:00",
+    "hours-1": "",
+    "hours-2": "10:00-18:00",
+    "hours-3": "",
+    "hours-4": "09:00-13:00",
+    "hours-5": "",
+    "hours-6": "",
     "timezone": "America/New_York",
     "currency": "USD",
 }
@@ -72,9 +76,9 @@ def test_create_business(owner_client, user):
     assert response.status_code == 302
     business = db.session.scalar(select(Business))
     assert business.owner == user
-    assert business.open_days == "024"
+    assert business.open_weekdays == [0, 2, 4]
+    assert business.hours_on(0) == [(time(9, 0), time(13, 0)), (time(15, 0), time(19, 0))]
     assert business.timezone == "America/New_York"
-    assert business.opens_at == time(9, 0)
 
 
 @pytest.mark.parametrize("slug", ["No Spaces", "ab", "trailing-", "émoji"])
@@ -91,21 +95,35 @@ def test_create_business_rejects_taken_address(owner_client, other_service):
     assert b"This address is already taken." in response.data
 
 
-def test_create_business_rejects_closing_before_opening(owner_client):
-    response = owner_client.post(
-        "/dashboard/business/new",
-        data={**BUSINESS_DATA, "opens_at": "18:00", "closes_at": "09:00"},
-    )
+@pytest.mark.parametrize(
+    ("hours", "message"),
+    [
+        ("18:00-09:00", b"Closing time must be after opening time."),
+        ("09:00-13:00, 12:00-15:00", b"Opening hours on the same day cannot overlap."),
+        ("nine to five", b"Write hours like 09:00-13:00, 15:00-19:00."),
+        ("09:15-12:00", b"Use times on the hour or half hour, up to 23:30."),
+    ],
+)
+def test_create_business_rejects_bad_hours(owner_client, hours, message):
+    response = owner_client.post("/dashboard/business/new", data={**BUSINESS_DATA, "hours-0": hours})
 
-    assert b"Closing time must be after opening time." in response.data
+    assert message in response.data
+    assert db.session.scalar(select(Business)) is None
 
 
-def test_create_business_requires_an_open_day(owner_client):
-    data = {key: value for key, value in BUSINESS_DATA.items() if key != "open_weekdays"}
+def test_create_business_requires_opening_hours(owner_client):
+    empty_week = {f"hours-{weekday}": "" for weekday in range(7)}
 
-    response = owner_client.post("/dashboard/business/new", data=data)
+    response = owner_client.post("/dashboard/business/new", data={**BUSINESS_DATA, **empty_week})
 
-    assert b"Pick at least one day." in response.data
+    assert b"Add opening hours for at least one day." in response.data
+
+
+def test_editing_business_replaces_its_hours(owner_client, business):
+    owner_client.post("/dashboard/business/edit", data={**BUSINESS_DATA, "slug": "north-side"})
+
+    assert business.open_weekdays == [0, 2, 4]
+    assert len(business.opening_hours) == 4
 
 
 def test_create_business_rejects_unknown_timezone(owner_client):

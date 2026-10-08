@@ -15,23 +15,49 @@
     {% endfor %}
   </nav>
 
-  {% if form.slot.choices %}
+  {% if timeline %}
   <form class="form" method="post" novalidate>
     {{ form.hidden_tag() }}
     <fieldset class="slot-picker">
       <legend>{{ _("Pick a time") }}</legend>
-      <div class="slot-options">
-        {% for option in form.slot %}
-        <label class="slot">{{ option() }} {{ option.label.text }}</label>
-        {% endfor %}
+      <div class="day timeline">
+        <div class="day-header">
+          <span class="day-name">{{ selected_day|day_label }}</span>
+        </div>
+        <div class="timeline-rows">
+          {% for row in timeline %}
+          {% set value = row.starts_at.isoformat() %}
+          {% if row.status == "free" %}
+          <label class="timeline-row is-free">
+            <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
+            <span class="timeline-cell">
+              <input type="radio" name="slot" value="{{ value }}"{% if form.slot.data == value %} checked{% endif %}>
+              {{ _("Open") }}
+            </span>
+          </label>
+          {% else %}
+          <div class="timeline-row is-{{ row.status }}">
+            <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
+            <span class="timeline-cell">
+              {% if row.status == "booked" %}{{ _("Booked") }}{% elif row.status == "closed" %}{{ _("Closed") }}{% endif %}
+            </span>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
       </div>
       {% if form.slot.errors %}
       <p class="field-error">{{ form.slot.errors[0] }}</p>
       {% endif %}
     </fieldset>
+
+    {% if form.slot.choices %}
     {{ field(form.customer_name, "name") }}
     {{ field(form.customer_email, "email") }}
     <button class="button" type="submit">{{ _("Confirm booking") }}</button>
+    {% else %}
+    <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>
+    {% endif %}
   </form>
   {% else %}
   <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>

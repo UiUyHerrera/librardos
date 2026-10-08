@@ -1,22 +1,21 @@
-from datetime import time
 from zoneinfo import available_timezones
 
 from babel.dates import get_day_names
 from babel.numbers import get_currency_name
 from flask_babel import get_locale
+from flask_babel import gettext as _
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     DecimalField,
+    FieldList,
     EmailField,
     IntegerField,
     PasswordField,
     RadioField,
     SelectField,
-    SelectMultipleField,
     StringField,
-    TimeField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -28,12 +27,16 @@ from wtforms.validators import (
     Regexp,
     ValidationError,
 )
-from wtforms.widgets import CheckboxInput, ListWidget, NumberInput
+from wtforms.widgets import NumberInput
+
+from reservini.hours import format_ranges, parse_ranges
+from reservini.models import OpeningHours
 
 PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = 128
 SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "MXN", "BRL", "ARS", "COP", "PEN"]
+DEFAULT_HOURS = ["09:00-18:00"] * 5 + ["", ""]
 TIMEZONES = sorted(
     zone for zone in available_timezones() if "/" in zone and not zone.startswith(("Etc/", "SystemV/"))
 )
@@ -50,11 +53,6 @@ def normalize_slug(value):
 def currency_label(code, locale):
     name = get_currency_name(code, locale=locale)
     return f"{name[:1].upper()}{name[1:]} ({code})"
-
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = ListWidget(prefix_label=False)
-    option_widget = CheckboxInput()
 
 
 class RegisterForm(FlaskForm):
@@ -106,26 +104,43 @@ class BusinessForm(FlaskForm):
     )
     timezone = SelectField(_l("Time zone"), default="UTC")
     currency = SelectField(_l("Currency"), default="USD")
-    opens_at = TimeField(_l("Opens at"), default=time(9, 0), validators=[DataRequired()])
-    closes_at = TimeField(_l("Closes at"), default=time(18, 0), validators=[DataRequired()])
-    open_weekdays = MultiCheckboxField(
-        _l("Open days"),
-        coerce=int,
-        default=[0, 1, 2, 3, 4],
-        validators=[DataRequired(message=_l("Pick at least one day."))],
-    )
+    hours = FieldList(StringField(validators=[Length(max=200)]), min_entries=7, max_entries=7)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, business=None, **kwargs):
         super().__init__(*args, **kwargs)
         locale = get_locale()
         day_names = get_day_names("wide", locale=locale)
         self.timezone.choices = ["UTC", *TIMEZONES]
         self.currency.choices = [(code, currency_label(code, locale)) for code in CURRENCIES]
-        self.open_weekdays.choices = [(day, day_names[day].capitalize()) for day in range(7)]
+        for weekday, entry in enumerate(self.hours):
+            entry.label.text = day_names[weekday].capitalize()
+            if not self.is_submitted():
+                entry.data = format_ranges(business.hours_on(weekday)) if business else DEFAULT_HOURS[weekday]
+        self.weekly_hours = {}
 
-    def validate_closes_at(self, field):
-        if self.opens_at.data and field.data and field.data <= self.opens_at.data:
-            raise ValidationError(_l("Closing time must be after opening time."))
+    def validate_hours(self, field):
+        weekly_hours = {}
+        for weekday, entry in enumerate(field):
+            try:
+                weekly_hours[weekday] = parse_ranges(entry.data)
+            except ValueError as error:
+                entry.errors.append(str(error))
+        if any(entry.errors for entry in field):
+            raise ValidationError(_("Check the opening hours."))
+        if not any(weekly_hours.values()):
+            raise ValidationError(_("Add opening hours for at least one day."))
+        self.weekly_hours = weekly_hours
+
+    def apply_to(self, business):
+        business.name = self.name.data
+        business.slug = self.slug.data
+        business.timezone = self.timezone.data
+        business.currency = self.currency.data
+        business.opening_hours = [
+            OpeningHours(weekday=weekday, opens_at=opens, closes_at=closes)
+            for weekday, ranges in self.weekly_hours.items()
+            for opens, closes in ranges
+        ]
 
 
 class ServiceForm(FlaskForm):

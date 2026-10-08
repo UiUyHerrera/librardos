@@ -13,13 +13,15 @@
   </div>
 
   <dl class="business-facts">
-    <div>
-      <dt>{{ _("Hours") }}</dt>
-      <dd>{{ business.opens_at.strftime("%H:%M") }} – {{ business.closes_at.strftime("%H:%M") }}</dd>
-    </div>
-    <div>
-      <dt>{{ _("Open days") }}</dt>
-      <dd>{{ business.open_weekdays|day_names }}</dd>
+    <div class="weekly-hours">
+      <dt>{{ _("Opening hours") }}</dt>
+      <dd>
+        <ul>
+          {% for weekday in business.open_weekdays %}
+          <li><span>{{ [weekday]|day_names }}</span> {{ business.hours_on(weekday)|hours_text }}</li>
+          {% endfor %}
+        </ul>
+      </dd>
     </div>
     <div>
       <dt>{{ _("Time zone") }}</dt>

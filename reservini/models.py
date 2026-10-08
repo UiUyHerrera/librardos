@@ -43,9 +43,6 @@ class User(UserMixin, db.Model):
 
 class Business(db.Model):
     __tablename__ = "businesses"
-    __table_args__ = (
-        CheckConstraint("opens_at < closes_at", name="opens_before_closing"),
-    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
@@ -53,21 +50,23 @@ class Business(db.Model):
     slug: Mapped[str] = mapped_column(String(60), unique=True)
     timezone: Mapped[str] = mapped_column(String(64), default="UTC")
     currency: Mapped[str] = mapped_column(String(3), default="USD")
-    opens_at: Mapped[time] = mapped_column(default=time(9, 0))
-    closes_at: Mapped[time] = mapped_column(default=time(18, 0))
-    open_days: Mapped[str] = mapped_column(String(7), default="01234")
     plan: Mapped[Plan] = mapped_column(default=Plan.FREE)
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
 
     owner: Mapped[User] = relationship(back_populates="business")
 
+    opening_hours: Mapped[list["OpeningHours"]] = relationship(
+        back_populates="business",
+        cascade="all, delete-orphan",
+        order_by=lambda: [OpeningHours.weekday, OpeningHours.opens_at],
+    )
+
     @property
     def open_weekdays(self):
-        return [int(day) for day in self.open_days]
+        return sorted({hours.weekday for hours in self.opening_hours})
 
-    @open_weekdays.setter
-    def open_weekdays(self, days):
-        self.open_days = "".join(str(day) for day in sorted(set(days)))
+    def hours_on(self, weekday):
+        return [(hours.opens_at, hours.closes_at) for hours in self.opening_hours if hours.weekday == weekday]
     services: Mapped[list["Service"]] = relationship(
         back_populates="business",
         cascade="all, delete-orphan",
@@ -78,6 +77,22 @@ class Business(db.Model):
         cascade="all, delete-orphan",
         order_by="Booking.starts_at",
     )
+
+
+class OpeningHours(db.Model):
+    __tablename__ = "opening_hours"
+    __table_args__ = (
+        CheckConstraint("opens_at < closes_at", name="opens_before_closing"),
+        CheckConstraint("weekday BETWEEN 0 AND 6", name="valid_weekday"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    business_id: Mapped[int] = mapped_column(ForeignKey("businesses.id"), index=True)
+    weekday: Mapped[int]
+    opens_at: Mapped[time]
+    closes_at: Mapped[time]
+
+    business: Mapped[Business] = relationship(back_populates="opening_hours")
 
 
 class Service(db.Model):

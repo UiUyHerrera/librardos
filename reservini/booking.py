@@ -14,6 +14,7 @@ from reservini.models import Booking, Business, Service, utc_now
 from reservini.scheduling import (
     available_slots,
     bookable_days,
+    day_timeline,
     from_database_time,
     parse_day,
     to_database_time,
@@ -39,7 +40,8 @@ def book_service(slug, service_id):
     now = utc_now()
     days = bookable_days(business, now)
     day = parse_day(request.args.get("day"), days)
-    slots = available_slots(business, service, day, now) if day else []
+    timeline = day_timeline(business, service, day, now) if day else []
+    slots = [row.starts_at for row in timeline if row.status == "free"]
 
     form = BookingForm()
     form.slot.choices = [(slot.isoformat(), slot.strftime("%H:%M")) for slot in slots]
@@ -58,6 +60,7 @@ def book_service(slug, service_id):
         service=service,
         days=days,
         selected_day=day,
+        timeline=timeline,
         form=form,
     )
 

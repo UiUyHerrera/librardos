@@ -12,21 +12,27 @@
     {{ field(form.name, "organization") }}
     {{ field(form.slug, hint=_("Clients will book at %(address)s", address=request.url_root ~ "b/" ~ _("your-business"))) }}
 
-    <div class="field-row">
-      {{ field(form.opens_at) }}
-      {{ field(form.closes_at) }}
-    </div>
+    <fieldset class="hours-fieldset">
+      <legend>{{ _("Opening hours") }}</legend>
 
-    <fieldset class="day-picker">
-      <legend>{{ form.open_weekdays.label.text }}</legend>
-      <div class="day-options">
-        {% for option in form.open_weekdays %}
-        <label class="checkbox">{{ option() }} {{ option.label.text }}</label>
-        {% endfor %}
+      <div class="hours-editor" data-hours-editor data-remove-label="{{ _('Remove') }}" hidden>
+        <p class="field-hint">{{ _("Drag down on a day to add hours. Drag a block to move it, pull its bottom edge to resize it, or press × to remove it.") }}</p>
+        <div class="hours-grid" data-hours-grid></div>
       </div>
-      {% if form.open_weekdays.errors %}
-      <p class="field-error">{{ form.open_weekdays.errors[0] }}</p>
-      {% endif %}
+
+      <details class="hours-text" data-hours-text open>
+        <summary>{{ _("Edit as text") }}</summary>
+        <p class="field-hint">{{ _("Write hours like 09:00-13:00, 15:00-19:00. Leave a day empty if you are closed.") }}</p>
+        <div class="hours-fields">
+          {% for entry in form.hours %}
+          {{ field(entry) }}
+          {% endfor %}
+        </div>
+      </details>
+
+      {% for error in form.hours.errors if error is string %}
+      <p class="field-error">{{ error }}</p>
+      {% endfor %}
     </fieldset>
 
     <div class="field-row">
@@ -42,4 +48,8 @@
     </div>
   </form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='hours-editor.js') }}" defer></script>
 {% endblock %}

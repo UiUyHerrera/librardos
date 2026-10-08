@@ -550,26 +550,6 @@ h3 {
   gap: 1.25rem;
 }
 
-.day-picker {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.day-picker legend {
-  margin-bottom: 0.75rem;
-  padding: 0;
-  font-weight: 600;
-}
-
-.day-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-}
-
 .form-actions {
   display: flex;
   flex-wrap: wrap;
@@ -717,11 +697,11 @@ h3 {
   appearance: none;
   padding-right: 2.75rem;
   background-image:
-    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+  linear-gradient(135deg, var(--muted) 50%, transparent 50%);
   background-position:
-    calc(100% - 1.375rem) 50%,
-    calc(100% - 1rem) 50%;
+  calc(100% - 1.375rem) 50%,
+  calc(100% - 1rem) 50%;
   background-size: 0.375rem 0.375rem;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -763,41 +743,6 @@ h3 {
 
 .field input[type="time"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
-}
-
-.day-options {
-  gap: 0.5rem;
-}
-
-.day-options .checkbox {
-  position: relative;
-  padding: 0.5rem 1rem;
-  border: 1.5px solid var(--line);
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-}
-
-.day-options .checkbox:hover {
-  border-color: var(--muted);
-}
-
-.day-options .checkbox input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.day-options .checkbox:has(input:checked) {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
-}
-
-.day-options .checkbox:has(input:focus-visible) {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
 }
 
 .preferences {
@@ -864,15 +809,13 @@ h3 {
   font-weight: 600;
 }
 
-.day-list,
-.slot-options {
+.day-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.day-list a,
-.slot {
+.day-list a {
   position: relative;
   padding: 0.5rem 0.875rem;
   border: 1.5px solid var(--line);
@@ -883,27 +826,14 @@ h3 {
   cursor: pointer;
 }
 
-.day-list a:hover,
-.slot:hover {
+.day-list a:hover {
   border-color: var(--muted);
 }
 
-.day-list a[aria-current="date"],
-.slot:has(input:checked) {
+.day-list a[aria-current="date"] {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-accent);
-}
-
-.slot input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.slot:has(input:focus-visible) {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
 }
 
 .slot-picker {
@@ -923,4 +853,257 @@ h3 {
 .booking-time {
   font-size: 1.375rem;
   font-weight: 700;
+}
+
+.hours-fieldset {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.hours-fieldset legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+.hours-editor {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.hours-editor[hidden] {
+  display: none;
+}
+
+.hours-scroll {
+  max-height: 26rem;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.hours-head,
+.hours-body {
+  display: grid;
+  grid-template-columns: 2.75rem repeat(7, minmax(0, 1fr));
+}
+
+.hours-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  border-bottom: 2px solid var(--ink);
+}
+
+.hours-day-name {
+  padding: 0.625rem 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.hours-times {
+  position: relative;
+}
+
+.hours-time {
+  position: absolute;
+  left: 0.375rem;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+}
+
+.hours-time:first-child {
+  transform: none;
+}
+
+.hours-day {
+  position: relative;
+  border-left: 1px solid var(--line);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% 36px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.hours-block {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  overflow: hidden;
+  padding: 1.125rem 0.25rem 0.5rem;
+  background: var(--accent);
+  border-radius: 6px;
+  color: var(--on-accent);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: grab;
+}
+
+.hours-block:active {
+  cursor: grabbing;
+}
+
+.hours-block-label {
+  display: grid;
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hours-block-remove {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hours-block-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.hours-block-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 1rem;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  opacity: 0.6;
+  transform: translateX(-50%);
+}
+
+.hours-text summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hours-text[open] summary {
+  margin-bottom: 0.75rem;
+}
+
+.hours-fields {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.weekly-hours {
+  grid-column: 1 / -1;
+}
+
+.weekly-hours ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weekly-hours li span {
+  display: inline-block;
+  min-width: 3rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.timeline {
+  justify-self: stretch;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.timeline-rows {
+  display: grid;
+}
+
+.timeline-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  column-gap: 0.75rem;
+  min-height: 2.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.timeline-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 4px 0 3px;
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.timeline-row.is-free {
+  cursor: pointer;
+}
+
+.timeline-row.is-free .timeline-cell {
+  border: 1.5px dashed var(--line);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.timeline-row.is-free:hover .timeline-cell {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.timeline-row.is-free input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.timeline-row.is-free:has(input:checked) .timeline-cell {
+  background: var(--accent);
+  border: 1.5px solid var(--accent);
+  color: var(--on-accent);
+}
+
+.timeline-row.is-free:has(input:focus-visible) .timeline-cell {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.timeline-row.is-booked .timeline-cell {
+  background: var(--marigold);
+  color: var(--on-light-block);
+  font-weight: 700;
+}
+
+.timeline-row.is-closed .timeline-cell {
+  background: repeating-linear-gradient(-45deg, transparent 0 6px, var(--line) 6px 7px);
+  color: var(--muted);
+}
+
+.timeline-row.is-unavailable .timeline-cell {
+  background: var(--paper);
 }

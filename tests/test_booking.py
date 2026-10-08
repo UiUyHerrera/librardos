@@ -5,8 +5,8 @@ import pytest
 from sqlalchemy import func, select
 
 from reservini.extensions import db
-from reservini.models import Booking, Business, Service, utc_now
-from reservini.scheduling import available_slots, bookable_days, to_database_time
+from reservini.models import Booking, Business, OpeningHours, Service, utc_now
+from reservini.scheduling import available_slots, bookable_days, day_timeline, to_database_time
 
 WEDNESDAY = date(2026, 1, 14)
 LONG_AGO = datetime(2025, 1, 1, tzinfo=UTC)
@@ -19,9 +19,7 @@ def business(user):
         name="North Side Barbers",
         slug="north-side",
         timezone="America/New_York",
-        opens_at=time(9, 0),
-        closes_at=time(12, 0),
-        open_days="0123456",
+        opening_hours=[OpeningHours(weekday=weekday, opens_at=time(9, 0), closes_at=time(12, 0)) for weekday in range(7)],
     )
     db.session.add(business)
     db.session.commit()
@@ -75,8 +73,23 @@ def test_past_slots_are_not_offered(business, haircut):
     assert slot_times(business, haircut, WEDNESDAY, now=ten_fifteen_in_new_york) == ["10:30", "11:00"]
 
 
+def test_slots_skip_the_break_between_two_blocks(business, haircut):
+    business.opening_hours.append(OpeningHours(weekday=WEDNESDAY.weekday(), opens_at=time(14, 0), closes_at=time(15, 0)))
+
+    assert slot_times(business, haircut, WEDNESDAY)[-2:] == ["11:00", "14:00"]
+
+
+def test_timeline_marks_booked_and_closed_times(business, haircut):
+    business.opening_hours.append(OpeningHours(weekday=WEDNESDAY.weekday(), opens_at=time(13, 0), closes_at=time(14, 0)))
+    add_booking(business, haircut, available_slots(business, haircut, WEDNESDAY, LONG_AGO)[0])
+
+    statuses = [row.status for row in day_timeline(business, haircut, WEDNESDAY, LONG_AGO)]
+
+    assert statuses == ["booked", "booked", "free", "free", "free", "unavailable", "closed", "closed", "free", "unavailable"]
+
+
 def test_closed_days_have_no_slots(business, haircut):
-    business.open_days = "01234"
+    business.opening_hours = [hours for hours in business.opening_hours if hours.weekday < 5]
 
     assert slot_times(business, haircut, date(2026, 1, 17)) == []
 
