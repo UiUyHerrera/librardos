@@ -4,7 +4,7 @@
 <section class="hero">
   <div class="hero-text">
     <h1>{{ _("Your clients book on their own") }}</h1>
-    <p class="lead">{{ _("Librardos gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule.") }}</p>
+    <p class="lead">{{ _("Reservini gives your business a booking page with your services and opening hours. Clients pick a free time and the appointment shows up in your schedule.") }}</p>
     {% if not current_user.is_authenticated %}
     <a class="button" href="{{ url_for('auth.register') }}">{{ _("Create your booking page") }}</a>
     {% endif %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% from "_form.html" import field %}
 
-{% block title %}{{ _("Log in") }} | Librardos{% endblock %}
+{% block title %}{{ _("Log in") }} | Reservini{% endblock %}
 
 {% block content %}
 <section class="auth">
-  <h1>{{ _("Log in to Librardos") }}</h1>
+  <h1>{{ _("Log in to Reservini") }}</h1>
 
   <form class="form" method="post" novalidate>
     {{ form.hidden_tag() }}
@@ -21,6 +21,6 @@
     <button class="button" type="submit">{{ _("Log in") }}</button>
   </form>
 
-  <p class="auth-switch">{{ _("New to Librardos?") }} <a href="{{ url_for('auth.register') }}">{{ _("Create an account") }}</a></p>
+  <p class="auth-switch">{{ _("New to Reservini?") }} <a href="{{ url_for('auth.register') }}">{{ _("Create an account") }}</a></p>
 </section>
 {% endblock %}

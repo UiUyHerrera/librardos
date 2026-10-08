@@ -1,9 +1,9 @@
 import pytest
 
-from librardos import create_app
-from librardos.config import Config
-from librardos.extensions import db
-from librardos.models import User
+from reservini import create_app
+from reservini.config import Config
+from reservini.extensions import db
+from reservini.models import User
 
 USER_EMAIL = "owner@example.com"
 USER_PASSWORD = "correct-horse"

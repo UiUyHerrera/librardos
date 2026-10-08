@@ -3,8 +3,8 @@ from datetime import datetime, time, timedelta
 import pytest
 from sqlalchemy import select
 
-from librardos.extensions import db
-from librardos.models import Booking, Business, Service, User
+from reservini.extensions import db
+from reservini.models import Booking, Business, Service, User
 
 USER_EMAIL = "owner@example.com"
 USER_PASSWORD = "correct-horse"

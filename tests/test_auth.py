@@ -1,7 +1,7 @@
 from sqlalchemy import func, select
 
-from librardos.extensions import db
-from librardos.models import User
+from reservini.extensions import db
+from reservini.models import User
 
 USER_EMAIL = "owner@example.com"
 USER_PASSWORD = "correct-horse"

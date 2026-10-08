@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, current_app, redirect, request, url_for
 from flask_babel import get_locale
 
-from librardos.security import safe_next_url
+from reservini.security import safe_next_url
 
 bp = Blueprint("language", __name__)
 

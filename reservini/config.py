@@ -3,7 +3,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///librardos.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///reservini.db")
     LANGUAGES = {"en": "English", "es": "Español"}
     BABEL_DEFAULT_LOCALE = "en"
     SESSION_COOKIE_SAMESITE = "Lax"

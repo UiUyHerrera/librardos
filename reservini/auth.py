@@ -5,10 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from librardos.extensions import db, limiter, login_manager
-from librardos.forms import LoginForm, RegisterForm
-from librardos.models import User
-from librardos.security import safe_next_url
+from reservini.extensions import db, limiter, login_manager
+from reservini.forms import LoginForm, RegisterForm
+from reservini.models import User
+from reservini.security import safe_next_url
 
 bp = Blueprint("auth", __name__)
 

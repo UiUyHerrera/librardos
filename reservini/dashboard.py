@@ -5,9 +5,9 @@ from flask_babel import gettext as _
 from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 
-from librardos.extensions import db
-from librardos.forms import BusinessForm, ServiceForm
-from librardos.models import Business, Service
+from reservini.extensions import db
+from reservini.forms import BusinessForm, ServiceForm
+from reservini.models import Business, Service
 
 bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 

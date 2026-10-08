@@ -1,16 +1,16 @@
 from flask import Flask
 
-from librardos.auth import bp as auth_bp
-from librardos.config import Config
-from librardos.dashboard import bp as dashboard_bp
-from librardos.database import init_db_command
-from librardos.errors import bp as errors_bp
-from librardos.extensions import babel, csrf, db, limiter, login_manager
-from librardos.language import bp as language_bp
-from librardos.language import select_locale
-from librardos.main import bp as main_bp
-from librardos.models import Booking, Business, Service, User
-from librardos.security import add_security_headers
+from reservini.auth import bp as auth_bp
+from reservini.config import Config
+from reservini.dashboard import bp as dashboard_bp
+from reservini.database import init_db_command
+from reservini.errors import bp as errors_bp
+from reservini.extensions import babel, csrf, db, limiter, login_manager
+from reservini.language import bp as language_bp
+from reservini.language import select_locale
+from reservini.main import bp as main_bp
+from reservini.models import Booking, Business, Service, User
+from reservini.security import add_security_headers
 
 
 def create_app(config_class=Config):

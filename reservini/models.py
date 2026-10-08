@@ -7,7 +7,7 @@ from sqlalchemy import CheckConstraint, ForeignKey, Index, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from librardos.extensions import db
+from reservini.extensions import db
 
 
 def utc_now():

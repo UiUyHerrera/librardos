@@ -5,7 +5,7 @@ from flask.cli import with_appcontext
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-from librardos.extensions import db
+from reservini.extensions import db
 
 
 @event.listens_for(Engine, "connect")
