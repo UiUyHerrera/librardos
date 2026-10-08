@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_form.html" import field %}
+
+{% block title %}{{ title }} | Librardos{% endblock %}
+
+{% block content %}
+<section class="form-page">
+  <h1>{{ title }}</h1>
+
+  <form class="form" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.name) }}
+    <div class="field-row">
+      {{ field(form.duration_minutes) }}
+      {{ field(form.price, hint=current_user.business.currency) }}
+    </div>
+
+    <div class="form-actions">
+      <button class="button" type="submit">{{ submit_label }}</button>
+      <a href="{{ url_for('dashboard.index') }}">{{ _("Cancel") }}</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

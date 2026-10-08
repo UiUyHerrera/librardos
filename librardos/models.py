@@ -1,5 +1,6 @@
 import enum
 from datetime import UTC, datetime, time
+from decimal import ROUND_HALF_UP, Decimal
 
 from flask_login import UserMixin
 from sqlalchemy import CheckConstraint, ForeignKey, Index, String, text
@@ -59,6 +60,14 @@ class Business(db.Model):
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
 
     owner: Mapped[User] = relationship(back_populates="business")
+
+    @property
+    def open_weekdays(self):
+        return [int(day) for day in self.open_days]
+
+    @open_weekdays.setter
+    def open_weekdays(self, days):
+        self.open_days = "".join(str(day) for day in sorted(set(days)))
     services: Mapped[list["Service"]] = relationship(
         back_populates="business",
         cascade="all, delete-orphan",
@@ -87,6 +96,14 @@ class Service(db.Model):
 
     business: Mapped[Business] = relationship(back_populates="services")
     bookings: Mapped[list["Booking"]] = relationship(back_populates="service")
+
+    @property
+    def price(self):
+        return Decimal(self.price_cents) / 100
+
+    @price.setter
+    def price(self, value):
+        self.price_cents = int((Decimal(value) * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
 
 class Booking(db.Model):

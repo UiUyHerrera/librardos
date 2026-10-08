@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_form.html" import field %}
+
+{% block title %}{{ title }} | Librardos{% endblock %}
+
+{% block content %}
+<section class="form-page">
+  <h1>{{ title }}</h1>
+
+  <form class="form" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.name, "organization") }}
+    {{ field(form.slug, hint=_("Clients will book at %(address)s", address=request.url_root ~ "b/" ~ _("your-business"))) }}
+
+    <div class="field-row">
+      {{ field(form.opens_at) }}
+      {{ field(form.closes_at) }}
+    </div>
+
+    <fieldset class="day-picker">
+      <legend>{{ form.open_weekdays.label.text }}</legend>
+      <div class="day-options">
+        {% for option in form.open_weekdays %}
+        <label class="checkbox">{{ option() }} {{ option.label.text }}</label>
+        {% endfor %}
+      </div>
+      {% if form.open_weekdays.errors %}
+      <p class="field-error">{{ form.open_weekdays.errors[0] }}</p>
+      {% endif %}
+    </fieldset>
+
+    <div class="field-row">
+      {{ field(form.timezone) }}
+      {{ field(form.currency) }}
+    </div>
+
+    <div class="form-actions">
+      <button class="button" type="submit">{{ submit_label }}</button>
+      {% if current_user.business %}
+      <a href="{{ url_for('dashboard.index') }}">{{ _("Cancel") }}</a>
+      {% endif %}
+    </div>
+  </form>
+</section>
+{% endblock %}

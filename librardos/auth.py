@@ -24,7 +24,7 @@ def load_user(user_id):
 @limiter.limit("10 per hour", methods=["POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("dashboard.index"))
 
     form = RegisterForm()
     if form.validate_on_submit():
@@ -39,7 +39,7 @@ def register():
         else:
             login_user(user)
             flash(_("Your account is ready."))
-            return redirect(url_for("main.index"))
+            return redirect(url_for("dashboard.create_business"))
 
     return render_template("auth/register.html", form=form)
 
@@ -48,7 +48,7 @@ def register():
 @limiter.limit("5 per minute", methods=["POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("dashboard.index"))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -57,7 +57,7 @@ def login():
             check_password_hash(DUMMY_PASSWORD_HASH, form.password.data)
         elif user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect(safe_next_url(request.args.get("next"), url_for("main.index")))
+            return redirect(safe_next_url(request.args.get("next"), url_for("dashboard.index")))
         form.form_errors.append(_("Wrong email or password."))
 
     return render_template("auth/login.html", form=form)

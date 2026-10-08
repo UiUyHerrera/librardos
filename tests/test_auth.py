@@ -67,7 +67,7 @@ def test_login_with_correct_password(client, user):
     response = login(client)
 
     assert response.status_code == 302
-    assert response.headers["Location"] == "/"
+    assert response.headers["Location"] == "/dashboard/"
     assert b"Log out" in client.get("/").data
 
 
@@ -84,7 +84,7 @@ def test_login_follows_a_safe_next_url(client, user):
 
 
 def test_login_ignores_an_external_next_url(client, user):
-    assert login(client, next_url="//evil.example").headers["Location"] == "/"
+    assert login(client, next_url="//evil.example").headers["Location"] == "/dashboard/"
 
 
 def test_logout_only_accepts_post(client, user):

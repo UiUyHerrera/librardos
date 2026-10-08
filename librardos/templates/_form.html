@@ -1,11 +1,20 @@
-{% macro field(form_field, autocomplete) %}
+{% macro field(form_field, autocomplete="off", hint=None) %}
+{% set attributes = {"autocomplete": autocomplete} %}
+{% set described_by = [] %}
+{% if hint %}{% set described_by = described_by + [form_field.id ~ "-hint"] %}{% endif %}
+{% if form_field.errors %}
+{% set described_by = described_by + [form_field.id ~ "-error"] %}
+{% set ignored = attributes.update({"aria_invalid": "true"}) %}
+{% endif %}
+{% if described_by %}{% set ignored = attributes.update({"aria_describedby": described_by|join(" ")}) %}{% endif %}
 <div class="field">
   {{ form_field.label }}
+  {% if hint %}
+  <p class="field-hint" id="{{ form_field.id }}-hint">{{ hint }}</p>
+  {% endif %}
+  {{ form_field(**attributes) }}
   {% if form_field.errors %}
-  {{ form_field(autocomplete=autocomplete, aria_invalid="true", aria_describedby=form_field.id ~ "-error") }}
   <p class="field-error" id="{{ form_field.id }}-error">{{ form_field.errors[0] }}</p>
-  {% else %}
-  {{ form_field(autocomplete=autocomplete) }}
   {% endif %}
 </div>
 {% endmacro %}

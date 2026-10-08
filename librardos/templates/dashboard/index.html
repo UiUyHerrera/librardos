@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("Dashboard") }} | Librardos{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+  <div class="dashboard-header">
+    <div class="dashboard-title">
+      <h1>{{ business.name }}</h1>
+      <p class="booking-address">{{ _("Your booking page") }}: <strong>{{ request.url_root }}b/{{ business.slug }}</strong></p>
+    </div>
+    <a class="button button-secondary" href="{{ url_for('dashboard.edit_business') }}">{{ _("Edit business") }}</a>
+  </div>
+
+  <dl class="business-facts">
+    <div>
+      <dt>{{ _("Hours") }}</dt>
+      <dd>{{ business.opens_at.strftime("%H:%M") }} – {{ business.closes_at.strftime("%H:%M") }}</dd>
+    </div>
+    <div>
+      <dt>{{ _("Open days") }}</dt>
+      <dd>{{ business.open_weekdays|day_names }}</dd>
+    </div>
+    <div>
+      <dt>{{ _("Time zone") }}</dt>
+      <dd>{{ business.timezone }}</dd>
+    </div>
+    <div>
+      <dt>{{ _("Currency") }}</dt>
+      <dd>{{ business.currency }}</dd>
+    </div>
+  </dl>
+
+  <section class="services" aria-labelledby="services-title">
+    <div class="section-header">
+      <h2 id="services-title">{{ _("Services") }}</h2>
+      <a class="button button-small" href="{{ url_for('dashboard.create_service') }}">{{ _("Add a service") }}</a>
+    </div>
+
+    {% if business.services %}
+    <ul class="service-list">
+      {% for service in business.services %}
+      <li class="service-row{% if not service.is_active %} is-hidden{% endif %}">
+        <div class="service-info">
+          <strong>{{ service.name }}</strong>
+          <span>{{ _("%(minutes)d min", minutes=service.duration_minutes) }}</span>
+          <span>{{ service.price|money(business.currency) }}</span>
+          {% if not service.is_active %}
+          <span class="badge">{{ _("Hidden") }}</span>
+          {% endif %}
+        </div>
+        <div class="service-actions">
+          <a href="{{ url_for('dashboard.edit_service', service_id=service.id) }}" aria-label="{{ _('Edit %(name)s', name=service.name) }}">{{ _("Edit") }}</a>
+          <form method="post" action="{{ url_for('dashboard.toggle_service', service_id=service.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if service.is_active %}
+            <button class="link-button" type="submit" aria-label="{{ _('Hide %(name)s', name=service.name) }}">{{ _("Hide") }}</button>
+            {% else %}
+            <button class="link-button" type="submit" aria-label="{{ _('Show %(name)s', name=service.name) }}">{{ _("Show") }}</button>
+            {% endif %}
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-state">{{ _("Add your first service so clients have something to book.") }}</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Librardos 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 14:36-0300\n"
+"POT-Creation-Date: 2026-10-08 14:50-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Librardos\n"
 "Language: es\n"
@@ -25,6 +25,50 @@ msgstr "Correo o contraseña incorrectos."
 
 msgid "You have logged out."
 msgstr "Cerraste sesión."
+
+msgid "Your business is ready. Now add the services you offer."
+msgstr "Tu negocio está listo. Ahora agrega los servicios que ofreces."
+
+msgid "Set up your business"
+msgstr "Configura tu negocio"
+
+msgid "Create business"
+msgstr "Crear negocio"
+
+msgid "Business details saved."
+msgstr "Datos del negocio guardados."
+
+msgid "Edit your business"
+msgstr "Edita tu negocio"
+
+msgid "Save changes"
+msgstr "Guardar cambios"
+
+msgid "Service added."
+msgstr "Servicio agregado."
+
+msgid "Add a service"
+msgstr "Agregar un servicio"
+
+msgid "Add service"
+msgstr "Agregar servicio"
+
+msgid "Service saved."
+msgstr "Servicio guardado."
+
+msgid "Edit service"
+msgstr "Editar servicio"
+
+#, python-format
+msgid "%(name)s is bookable again."
+msgstr "%(name)s se puede reservar otra vez."
+
+#, python-format
+msgid "%(name)s is hidden from your booking page."
+msgstr "%(name)s ya no aparece en tu página de reservas."
+
+msgid "This address is already taken."
+msgstr "Esta dirección ya está en uso."
 
 msgid "Page not found"
 msgstr "Página no encontrada"
@@ -66,6 +110,45 @@ msgstr "Las contraseñas no coinciden."
 msgid "Keep me logged in"
 msgstr "Mantener la sesión iniciada"
 
+msgid "Business name"
+msgstr "Nombre del negocio"
+
+msgid "Booking page address"
+msgstr "Dirección de tu página de reservas"
+
+msgid "Use lowercase letters, numbers and hyphens."
+msgstr "Usa letras minúsculas, números y guiones."
+
+msgid "Time zone"
+msgstr "Zona horaria"
+
+msgid "Currency"
+msgstr "Moneda"
+
+msgid "Opens at"
+msgstr "Abre a las"
+
+msgid "Closes at"
+msgstr "Cierra a las"
+
+msgid "Open days"
+msgstr "Días de atención"
+
+msgid "Pick at least one day."
+msgstr "Elige al menos un día."
+
+msgid "Closing time must be after opening time."
+msgstr "La hora de cierre debe ser después de la de apertura."
+
+msgid "Service name"
+msgstr "Nombre del servicio"
+
+msgid "Length in minutes"
+msgstr "Duración en minutos"
+
+msgid "Price"
+msgstr "Precio"
+
 msgid "Librardos gives small businesses a booking page where clients pick a free time."
 msgstr "Librardos le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
 
@@ -74,6 +157,9 @@ msgstr "Saltar al contenido"
 
 msgid "Account"
 msgstr "Cuenta"
+
+msgid "Dashboard"
+msgstr "Panel"
 
 msgid "Log out"
 msgstr "Cerrar sesión"
@@ -158,4 +244,57 @@ msgstr "Crear cuenta"
 
 msgid "Already have an account?"
 msgstr "¿Ya tienes cuenta?"
+
+#, python-format
+msgid "Clients will book at %(address)s"
+msgstr "Tus clientes reservarán en %(address)s"
+
+msgid "your-business"
+msgstr "tu-negocio"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Your booking page"
+msgstr "Tu página de reservas"
+
+msgid "Edit business"
+msgstr "Editar negocio"
+
+msgid "Hours"
+msgstr "Horario"
+
+msgid "Services"
+msgstr "Servicios"
+
+#, python-format
+msgid "%(minutes)d min"
+msgstr "%(minutes)d min"
+
+msgid "Hidden"
+msgstr "Oculto"
+
+#, python-format
+msgid "Edit %(name)s"
+msgstr "Editar %(name)s"
+
+msgid "Edit"
+msgstr "Editar"
+
+#, python-format
+msgid "Hide %(name)s"
+msgstr "Ocultar %(name)s"
+
+msgid "Hide"
+msgstr "Ocultar"
+
+#, python-format
+msgid "Show %(name)s"
+msgstr "Mostrar %(name)s"
+
+msgid "Show"
+msgstr "Mostrar"
+
+msgid "Add your first service so clients have something to book."
+msgstr "Agrega tu primer servicio para que tus clientes tengan algo que reservar."
 
