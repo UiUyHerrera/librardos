@@ -15,6 +15,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url(os.environ.get("DATABASE_URL"))
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     TRUST_PROXY = os.environ.get("TRUST_PROXY") == "1"
+    CRON_SECRET = os.environ.get("CRON_SECRET")
     LANGUAGES = {"en": "English", "es": "Español"}
     BABEL_DEFAULT_LOCALE = "en"
     SESSION_COOKIE_SAMESITE = "Lax"

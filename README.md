@@ -68,8 +68,16 @@ pybabel compile -d reservini/translations
 
 ## Reminders
 
-`flask send-reminders` sends the reminder emails that are due. Run it every hour. It can run more often without sending the same reminder twice.
+`flask send-reminders` sends the reminder emails that are due. It can run more often than needed without sending the same reminder twice.
+
+In production, Vercel calls `/tasks/send-reminders` once a day. The route only runs when the request carries the `CRON_SECRET` value.
 
 ## Deploy
 
-`render.yaml` describes the deployment on Render: a web service, a PostgreSQL database and an hourly cron job for reminders. Create a new Blueprint on Render from this repository and fill in the `MAIL_*` values. Cron jobs on Render need a paid plan.
+The app runs on Vercel with a PostgreSQL database on Neon.
+
+1. Create the tables once from your computer, with `DATABASE_URL` set to the Neon connection string: `flask init-db`.
+2. Import the repository in Vercel.
+3. Add these environment variables in Vercel: `SECRET_KEY`, `DATABASE_URL`, `TRUST_PROXY=1`, `CRON_SECRET` and, to send emails, the `MAIL_*` values.
+
+`vercel.json` sends every request to `api/index.py` and schedules the daily reminders.

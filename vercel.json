@@ -1,0 +1,5 @@
+{
+  "regions": ["gru1"],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
+  "crons": [{ "path": "/tasks/send-reminders", "schedule": "0 11 * * *" }]
+}

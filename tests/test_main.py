@@ -32,3 +32,19 @@ def test_https_responses_ask_browsers_to_stay_on_https(client):
     headers = client.get("/", base_url="https://localhost").headers
 
     assert headers["Strict-Transport-Security"].startswith("max-age=")
+
+
+def test_reminder_task_is_hidden_without_the_secret(app, client):
+    app.config["CRON_SECRET"] = "cron-secret"
+
+    assert client.get("/tasks/send-reminders").status_code == 404
+    assert client.get("/tasks/send-reminders", headers={"Authorization": "Bearer wrong"}).status_code == 404
+
+
+def test_reminder_task_runs_with_the_secret(app, client):
+    app.config["CRON_SECRET"] = "cron-secret"
+
+    response = client.get("/tasks/send-reminders", headers={"Authorization": "Bearer cron-secret"})
+
+    assert response.status_code == 200
+    assert response.json == {"sent": 0}
