@@ -80,4 +80,4 @@ The app runs on Vercel with a PostgreSQL database on Neon.
 
 The tables are created on the first start.
 
-`vercel.json` sends every request to `api/index.py` and schedules the daily reminders.
+`api/index.py` is the entry point on Vercel, and `vercel.json` sets the region and schedules the daily reminders.
