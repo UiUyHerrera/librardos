@@ -43,7 +43,11 @@
     </fieldset>
 
     <div class="field-row">
+      {% if current_user.business %}
       {{ field(form.timezone) }}
+      {% else %}
+      <div data-guess-timezone>{{ field(form.timezone) }}</div>
+      {% endif %}
       {{ field(form.currency) }}
     </div>
 
@@ -59,4 +63,5 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='hours-editor.js') }}" defer></script>
+<script src="{{ url_for('static', filename='timezone.js') }}" defer></script>
 {% endblock %}

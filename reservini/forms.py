@@ -1,6 +1,8 @@
-from zoneinfo import available_timezones
+from datetime import UTC, date, datetime
+from functools import lru_cache
+from zoneinfo import ZoneInfo
 
-from babel.dates import get_day_names
+from babel.dates import get_day_names, get_timezone_location
 from babel.numbers import get_currency_name
 from flask_babel import get_locale
 from flask_babel import gettext as _
@@ -37,9 +39,44 @@ PASSWORD_MAX_LENGTH = 128
 SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "MXN", "BRL", "ARS", "COP", "PEN"]
 DEFAULT_HOURS = ["09:00-18:00"] * 5 + ["", ""]
-TIMEZONES = sorted(
-    zone for zone in available_timezones() if "/" in zone and not zone.startswith(("Etc/", "SystemV/"))
-)
+TIMEZONES = [
+    "Pacific/Honolulu",
+    "America/Anchorage",
+    "America/Los_Angeles",
+    "America/Denver",
+    "America/Phoenix",
+    "America/Chicago",
+    "America/Mexico_City",
+    "America/New_York",
+    "America/Bogota",
+    "America/Lima",
+    "America/Caracas",
+    "America/La_Paz",
+    "America/Santo_Domingo",
+    "America/Montevideo",
+    "America/Argentina/Buenos_Aires",
+    "America/Sao_Paulo",
+    "Europe/London",
+    "Europe/Lisbon",
+    "Europe/Madrid",
+    "Europe/Paris",
+    "Europe/Berlin",
+    "Europe/Rome",
+    "Africa/Lagos",
+    "Europe/Athens",
+    "Africa/Cairo",
+    "Africa/Johannesburg",
+    "Europe/Istanbul",
+    "Europe/Moscow",
+    "Asia/Dubai",
+    "Asia/Kolkata",
+    "Asia/Bangkok",
+    "Asia/Singapore",
+    "Asia/Shanghai",
+    "Asia/Tokyo",
+    "Australia/Sydney",
+    "Pacific/Auckland",
+]
 
 
 def normalize_email(value):
@@ -48,6 +85,24 @@ def normalize_email(value):
 
 def normalize_slug(value):
     return value.strip().lower() if value else value
+
+
+def format_offset(offset):
+    total_minutes = int(offset.total_seconds() // 60)
+    sign = "+" if total_minutes >= 0 else "−"
+    hours, minutes = divmod(abs(total_minutes), 60)
+    return f"{sign}{hours:02d}:{minutes:02d}"
+
+
+@lru_cache(maxsize=8)
+def timezone_choices(locale_name, day):
+    now = datetime.combine(day, datetime.min.time(), tzinfo=UTC)
+    zones = []
+    for zone in ["UTC", *TIMEZONES]:
+        offset = now.astimezone(ZoneInfo(zone)).utcoffset()
+        city = get_timezone_location(zone, locale=locale_name, return_city=True).split("/")[-1]
+        zones.append((offset, city, zone))
+    return [(zone, f"(UTC{format_offset(offset)}) {city}") for offset, city, zone in sorted(zones)]
 
 
 def currency_label(code, locale):
@@ -110,7 +165,7 @@ class BusinessForm(FlaskForm):
         super().__init__(*args, **kwargs)
         locale = get_locale()
         day_names = get_day_names("wide", locale=locale)
-        self.timezone.choices = ["UTC", *TIMEZONES]
+        self.timezone.choices = timezone_choices(str(locale), date.today())
         self.currency.choices = [(code, currency_label(code, locale)) for code in CURRENCIES]
         for weekday, entry in enumerate(self.hours):
             entry.label.text = day_names[weekday].capitalize()

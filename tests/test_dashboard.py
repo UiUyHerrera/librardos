@@ -197,3 +197,9 @@ def test_service_with_bookings_cannot_be_deleted(owner_client, service):
 def test_owner_cannot_delete_another_owners_service(owner_client, business, other_service):
     assert owner_client.post(f"/dashboard/services/{other_service.id}/delete").status_code == 404
     assert db.session.get(Service, other_service.id) is not None
+
+
+def test_time_zones_are_shown_with_offset_and_city(owner_client):
+    response = owner_client.get("/dashboard/business/new")
+
+    assert '<option value="America/Montevideo">(UTC−03:00) Montevideo</option>' in response.text
