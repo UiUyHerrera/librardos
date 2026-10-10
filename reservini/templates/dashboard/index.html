@@ -33,6 +33,52 @@
     </div>
   </dl>
 
+  <section class="plan-card" aria-labelledby="plan-title">
+    <div>
+      {% if business.plan == "pro" %}
+      <h2 id="plan-title">{{ _("Pro plan") }}</h2>
+      <p>{{ _("Unlimited bookings. %(count)d this month.", count=bookings_this_month) }}</p>
+      {% else %}
+      <h2 id="plan-title">{{ _("Free plan") }}</h2>
+      <p>{{ _("%(count)d of %(limit)d bookings used this month.", count=bookings_this_month, limit=monthly_limit) }}</p>
+      <progress max="{{ monthly_limit }}" value="{{ [bookings_this_month, monthly_limit]|min }}"></progress>
+      {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('dashboard.change_plan', name='free' if business.plan == 'pro' else 'pro') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if business.plan == "pro" %}
+      <button class="button button-secondary button-small" type="submit">{{ _("Switch to Free") }}</button>
+      {% else %}
+      <button class="button button-small" type="submit">{{ _("Upgrade to Pro") }}</button>
+      {% endif %}
+      <p class="field-hint">{{ _("Demo: no payment is taken.") }}</p>
+    </form>
+  </section>
+
+  <section class="bookings" aria-labelledby="bookings-title">
+    <h2 id="bookings-title">{{ _("Upcoming bookings") }}</h2>
+    {% if upcoming %}
+    <ul class="booking-list">
+      {% for booking in upcoming %}
+      <li class="booking-row">
+        <div class="booking-info">
+          <strong>{{ booking.starts_at|local_time(business, "EEE d MMM, HH:mm") }}</strong>
+          <span>{{ booking.service.name }}</span>
+          <span>{{ booking.customer_name }}</span>
+          <a href="mailto:{{ booking.customer_email }}">{{ booking.customer_email }}</a>
+        </div>
+        <form method="post" action="{{ url_for('dashboard.cancel_booking', booking_id=booking.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="link-button" type="submit" aria-label="{{ _('Cancel booking of %(name)s', name=booking.customer_name) }}">{{ _("Cancel booking") }}</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-state">{{ _("No upcoming bookings yet. Share your booking page to get the first one.") }}</p>
+    {% endif %}
+  </section>
+
   <section class="services" aria-labelledby="services-title">
     <div class="section-header">
       <h2 id="services-title">{{ _("Services") }}</h2>

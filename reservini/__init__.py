@@ -1,4 +1,5 @@
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from reservini.auth import bp as auth_bp
 from reservini.booking import bp as booking_bp
@@ -11,6 +12,7 @@ from reservini.language import bp as language_bp
 from reservini.language import select_locale
 from reservini.main import bp as main_bp
 from reservini.models import Booking, Business, Service, User
+from reservini.notifications import send_reminders_command
 from reservini.security import add_security_headers
 from reservini.theme import bp as theme_bp
 
@@ -21,6 +23,9 @@ def create_app(config_class=Config):
 
     if not app.config["SECRET_KEY"]:
         raise RuntimeError("SECRET_KEY is not set")
+
+    if app.config["TRUST_PROXY"]:
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     db.init_app(app)
     csrf.init_app(app)
@@ -38,6 +43,7 @@ def create_app(config_class=Config):
     app.after_request(add_security_headers)
     app.shell_context_processor(make_shell_context)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(send_reminders_command)
 
     return app
 

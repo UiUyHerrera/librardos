@@ -11,6 +11,8 @@ from sqlalchemy.exc import IntegrityError
 from reservini.extensions import db, limiter
 from reservini.forms import BookingForm
 from reservini.models import Booking, Business, Service, utc_now
+from reservini.notifications import send_booking_confirmation
+from reservini.plans import can_take_booking
 from reservini.scheduling import (
     available_slots,
     bookable_days,
@@ -39,14 +41,18 @@ def book_service(slug, service_id):
     service = active_service_or_404(business, service_id)
     now = utc_now()
     days = bookable_days(business, now)
-    day = parse_day(request.args.get("day"), days)
-    timeline = day_timeline(business, service, day, now) if day else []
-    slots = [row.starts_at for row in timeline if row.status == "free"]
+    timelines = [(day, day_timeline(business, service, day, now)) for day in days]
+    slots = [row.starts_at for _day, rows in timelines for row in rows if row.status == "free"]
+    days_with_slots = [day for day, rows in timelines if any(row.status == "free" for row in rows)]
+    selected_day = parse_day(request.args.get("day"), days)
+    if "day" not in request.args and days_with_slots:
+        selected_day = days_with_slots[0]
 
+    accepting_bookings = can_take_booking(business, now)
     form = BookingForm()
     form.slot.choices = [(slot.isoformat(), slot.strftime("%H:%M")) for slot in slots]
 
-    if form.validate_on_submit():
+    if accepting_bookings and form.validate_on_submit():
         booking = create_booking(business, service, form)
         if booking is None:
             form.slot.errors.append(_("Someone just took that time. Pick another one."))
@@ -58,9 +64,9 @@ def book_service(slug, service_id):
         "booking/book.html",
         business=business,
         service=service,
-        days=days,
-        selected_day=day,
-        timeline=timeline,
+        selected_day=selected_day,
+        timelines=timelines,
+        accepting_bookings=accepting_bookings,
         form=form,
     )
 
@@ -85,8 +91,8 @@ def local_time(moment, business, pattern="EEEE d MMMM, HH:mm"):
 
 
 @bp.app_template_filter("day_label")
-def day_label(day):
-    return format_date(day, "EEE d MMM", locale=get_locale())
+def day_label(day, pattern="EEE d MMM"):
+    return format_date(day, pattern, locale=get_locale())
 
 
 def create_booking(business, service, form):
@@ -103,6 +109,7 @@ def create_booking(business, service, form):
         customer_email=form.customer_email.data,
         starts_at=to_database_time(starts_at),
         ends_at=to_database_time(starts_at + timedelta(minutes=service.duration_minutes)),
+        language=str(get_locale()),
     )
     db.session.add(booking)
     try:
@@ -110,6 +117,7 @@ def create_booking(business, service, form):
     except IntegrityError:
         db.session.rollback()
         return None
+    send_booking_confirmation(booking)
     return booking
 
 

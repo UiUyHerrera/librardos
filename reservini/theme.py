@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, redirect, request, url_for
+from flask import Blueprint, abort, has_request_context, redirect, request, url_for
 
 from reservini.preferences import remember_preference
 from reservini.security import safe_next_url
@@ -11,7 +11,7 @@ THEMES = ("light", "dark")
 
 @bp.app_context_processor
 def inject_current_theme():
-    theme = request.cookies.get(THEME_COOKIE)
+    theme = request.cookies.get(THEME_COOKIE) if has_request_context() else None
     return {"current_theme": theme if theme in THEMES else None}
 
 

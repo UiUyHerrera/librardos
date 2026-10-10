@@ -3,11 +3,15 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_babel import format_currency, get_locale
 from flask_babel import gettext as _
 from flask_login import current_user, login_required
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from reservini.extensions import db
 from reservini.forms import BusinessForm, ServiceForm
-from reservini.models import Business, Service
+from reservini.models import Booking, BookingStatus, Business, Plan, Service, utc_now
+from reservini.notifications import send_booking_cancellation
+from reservini.plans import FREE_MONTHLY_BOOKINGS, monthly_booking_count
+from reservini.scheduling import to_database_time
 
 bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
@@ -34,7 +38,25 @@ def index():
     business = current_user.business
     if business is None:
         return redirect(url_for("dashboard.create_business"))
-    return render_template("dashboard/index.html", business=business)
+
+    now = utc_now()
+    upcoming = db.session.scalars(
+        select(Booking)
+        .where(
+            Booking.business_id == business.id,
+            Booking.status == BookingStatus.CONFIRMED,
+            Booking.ends_at > to_database_time(now),
+        )
+        .order_by(Booking.starts_at)
+        .limit(50)
+    ).all()
+    return render_template(
+        "dashboard/index.html",
+        business=business,
+        upcoming=upcoming,
+        bookings_this_month=monthly_booking_count(business, now),
+        monthly_limit=FREE_MONTHLY_BOOKINGS,
+    )
 
 
 @bp.route("/business/new", methods=["GET", "POST"])
@@ -126,6 +148,38 @@ def delete_service(service_id):
         return redirect(url_for("dashboard.index"))
 
     return render_template("dashboard/delete_service.html", service=service)
+
+
+@bp.post("/bookings/<int:booking_id>/cancel")
+@login_required
+def cancel_booking(booking_id):
+    booking = db.session.get(Booking, booking_id)
+    if booking is None or booking.business.owner_id != current_user.id:
+        abort(404)
+
+    if booking.status == BookingStatus.CONFIRMED:
+        booking.status = BookingStatus.CANCELLED
+        db.session.commit()
+        send_booking_cancellation(booking)
+        flash(_("Booking cancelled. We let %(name)s know by email.", name=booking.customer_name))
+    return redirect(url_for("dashboard.index"))
+
+
+@bp.post("/plan/<name>")
+@login_required
+def change_plan(name):
+    business = business_or_404()
+    plans = {"free": Plan.FREE, "pro": Plan.PRO}
+    if name not in plans:
+        abort(404)
+
+    business.plan = plans[name]
+    db.session.commit()
+    if business.plan == Plan.PRO:
+        flash(_("You are on the Pro plan. There is no booking limit now."))
+    else:
+        flash(_("You are back on the Free plan."))
+    return redirect(url_for("dashboard.index"))
 
 
 def business_or_404():

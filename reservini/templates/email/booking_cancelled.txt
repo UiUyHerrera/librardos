@@ -1,0 +1,8 @@
+{{ _("Hi %(name)s,", name=booking.customer_name) }}
+
+{{ _("Your booking was cancelled by %(business)s.", business=booking.business.name) }}
+
+{{ booking.service.name }}
+{{ booking.starts_at|local_time(booking.business) }} ({{ booking.business.timezone }})
+
+{{ _("You can book another time from their booking page.") }}

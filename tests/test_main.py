@@ -1,3 +1,6 @@
+from reservini.config import database_url
+
+
 def test_home_page_loads(client):
     response = client.get("/")
 
@@ -17,3 +20,15 @@ def test_missing_page_shows_friendly_error(client):
 
     assert response.status_code == 404
     assert b"Page not found" in response.data
+
+
+def test_postgres_urls_use_the_psycopg_driver():
+    assert database_url("postgres://user:secret@host/db") == "postgresql+psycopg://user:secret@host/db"
+    assert database_url("postgresql://user:secret@host/db") == "postgresql+psycopg://user:secret@host/db"
+    assert database_url(None) == "sqlite:///reservini.db"
+
+
+def test_https_responses_ask_browsers_to_stay_on_https(client):
+    headers = client.get("/", base_url="https://localhost").headers
+
+    assert headers["Strict-Transport-Security"].startswith("max-age=")

@@ -14,6 +14,10 @@ def utc_now():
     return datetime.now(UTC)
 
 
+def database_now():
+    return utc_now().replace(tzinfo=None)
+
+
 class Plan(enum.StrEnum):
     FREE = "free"
     PRO = "pro"
@@ -30,7 +34,7 @@ class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
-    created_at: Mapped[datetime] = mapped_column(default=utc_now)
+    created_at: Mapped[datetime] = mapped_column(default=database_now)
 
     business: Mapped["Business | None"] = relationship(back_populates="owner")
 
@@ -51,7 +55,7 @@ class Business(db.Model):
     timezone: Mapped[str] = mapped_column(String(64), default="UTC")
     currency: Mapped[str] = mapped_column(String(3), default="USD")
     plan: Mapped[Plan] = mapped_column(default=Plan.FREE)
-    created_at: Mapped[datetime] = mapped_column(default=utc_now)
+    created_at: Mapped[datetime] = mapped_column(default=database_now)
 
     owner: Mapped[User] = relationship(back_populates="business")
 
@@ -143,7 +147,9 @@ class Booking(db.Model):
     starts_at: Mapped[datetime]
     ends_at: Mapped[datetime]
     status: Mapped[BookingStatus] = mapped_column(default=BookingStatus.CONFIRMED)
-    created_at: Mapped[datetime] = mapped_column(default=utc_now)
+    language: Mapped[str] = mapped_column(String(5), default="en")
+    reminder_sent_at: Mapped[datetime | None]
+    created_at: Mapped[datetime] = mapped_column(default=database_now)
 
     business: Mapped[Business] = relationship(back_populates="bookings")
     service: Mapped[Service] = relationship(back_populates="bookings")

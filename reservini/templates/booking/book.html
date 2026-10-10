@@ -9,58 +9,83 @@
   <h1>{{ service.name }}</h1>
   <p class="lead">{{ _("%(minutes)d min", minutes=service.duration_minutes) }}, {{ service.price|money(business.currency) }}</p>
 
-  <nav class="day-list" aria-label="{{ _('Pick a day') }}">
-    {% for day in days %}
-    <a href="{{ url_for('booking.book_service', slug=business.slug, service_id=service.id, day=day.isoformat()) }}"{% if day == selected_day %} aria-current="date"{% endif %}>{{ day|day_label }}</a>
-    {% endfor %}
-  </nav>
+  {% if not accepting_bookings %}
+  <p class="empty-state">{{ _("This business is not taking new bookings this month. Please try again later.") }}</p>
+  {% elif timelines %}
+  <div class="booking-layout" data-booking-picker>
+    <div class="booking-filters">
+      <nav class="day-list" aria-label="{{ _('Pick a day') }}">
+        {% for day, rows in timelines %}
+        {% set free_count = rows|selectattr("status", "equalto", "free")|list|length %}
+        <a class="day-chip{% if not free_count %} is-full{% endif %}" aria-label="{{ day|day_label('EEEE d MMMM') }}, {{ ngettext('%(num)d free', '%(num)d free', free_count) }}" href="{{ url_for('booking.book_service', slug=business.slug, service_id=service.id, day=day.isoformat()) }}" data-day="{{ day.isoformat() }}"{% if day == selected_day %} aria-current="date"{% endif %}>
+          <span class="day-chip-weekday">{{ day|day_label("EEE") }}</span>
+          <span class="day-chip-date">{{ day.day }}</span>
+          <span class="day-chip-count">{{ ngettext("%(num)d free", "%(num)d free", free_count) }}</span>
+        </a>
+        {% endfor %}
+      </nav>
 
-  {% if timeline %}
-  <form class="form" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <fieldset class="slot-picker">
-      <legend>{{ _("Pick a time") }}</legend>
-      <div class="day timeline">
-        <div class="day-header">
-          <span class="day-name">{{ selected_day|day_label }}</span>
-        </div>
-        <div class="timeline-rows">
-          {% for row in timeline %}
-          {% set value = row.starts_at.isoformat() %}
-          {% if row.status == "free" %}
-          <label class="timeline-row is-free">
-            <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
-            <span class="timeline-cell">
-              <input type="radio" name="slot" value="{{ value }}"{% if form.slot.data == value %} checked{% endif %}>
-              {{ _("Open") }}
-            </span>
-          </label>
-          {% else %}
-          <div class="timeline-row is-{{ row.status }}">
-            <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
-            <span class="timeline-cell">
-              {% if row.status == "booked" %}{{ _("Booked") }}{% elif row.status == "closed" %}{{ _("Closed") }}{% endif %}
-            </span>
-          </div>
-          {% endif %}
-          {% endfor %}
-        </div>
+      <div class="period-filter" role="group" aria-label="{{ _('Time of day') }}" data-period-filter hidden>
+        <button type="button" data-period="all" aria-pressed="true">{{ _("All day") }}</button>
+        <button type="button" data-period="morning" aria-pressed="false">{{ _("Morning") }}</button>
+        <button type="button" data-period="afternoon" aria-pressed="false">{{ _("Afternoon") }}</button>
+        <button type="button" data-period="evening" aria-pressed="false">{{ _("Evening") }}</button>
       </div>
-      {% if form.slot.errors %}
-      <p class="field-error">{{ form.slot.errors[0] }}</p>
-      {% endif %}
-    </fieldset>
+    </div>
 
-    {% if form.slot.choices %}
-    {{ field(form.customer_name, "name") }}
-    {{ field(form.customer_email, "email") }}
-    <button class="button" type="submit">{{ _("Confirm booking") }}</button>
-    {% else %}
-    <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>
-    {% endif %}
-  </form>
+    <form class="form" method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <fieldset class="slot-picker">
+        <legend>{{ _("Pick a time") }}</legend>
+        {% for day, rows in timelines %}
+        <div class="day timeline" data-day-panel="{{ day.isoformat() }}"{% if day != selected_day %} hidden{% endif %}>
+          <div class="day-header">
+            <span class="day-name">{{ day|day_label("EEEE d MMMM") }}</span>
+          </div>
+          <div class="timeline-rows">
+            {% for row in rows %}
+            {% set value = row.starts_at.isoformat() %}
+            {% set period = "morning" if row.starts_at.hour < 12 else ("afternoon" if row.starts_at.hour < 18 else "evening") %}
+            {% if row.status == "free" %}
+            <label class="timeline-row is-free" data-period="{{ period }}">
+              <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
+              <span class="timeline-cell">
+                <input type="radio" name="slot" value="{{ value }}"{% if form.slot.data == value %} checked{% endif %}>
+                {{ _("Open") }}
+              </span>
+            </label>
+            {% else %}
+            <div class="timeline-row is-{{ row.status }}" data-period="{{ period }}">
+              <span class="time">{{ row.starts_at.strftime("%H:%M") }}</span>
+              <span class="timeline-cell">{% if row.status == "booked" %}{{ _("Booked") }}{% endif %}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% if not rows|selectattr("status", "equalto", "free")|list %}
+          <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+        {% if form.slot.errors %}
+        <p class="field-error">{{ form.slot.errors[0] }}</p>
+        {% endif %}
+      </fieldset>
+
+      {% if form.slot.choices %}
+      {{ field(form.customer_name, "name") }}
+      {{ field(form.customer_email, "email") }}
+      <p class="field-hint">{{ _("We will email you a confirmation and a reminder on the morning of your booking.") }}</p>
+      <button class="button" type="submit">{{ _("Confirm booking") }}</button>
+      {% endif %}
+    </form>
+  </div>
   {% else %}
-  <p class="empty-state">{{ _("No free times this day. Try another day.") }}</p>
+  <p class="empty-state">{{ _("No free times in the next two weeks.") }}</p>
   {% endif %}
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='booking-picker.js') }}" defer></script>
 {% endblock %}

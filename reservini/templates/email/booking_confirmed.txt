@@ -1,0 +1,9 @@
+{{ _("Hi %(name)s,", name=booking.customer_name) }}
+
+{{ _("Your booking is confirmed.") }}
+
+{{ booking.service.name }}
+{{ booking.business.name }}
+{{ booking.starts_at|local_time(booking.business) }} ({{ booking.business.timezone }})
+
+{{ _("We will send you a reminder on the morning of your booking.") }}

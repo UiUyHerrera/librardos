@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 15:54-0300\n"
+"POT-Creation-Date: 2026-10-09 23:07-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -77,6 +77,16 @@ msgstr "%(name)s tiene reservas, así que solo se puede ocultar."
 #, python-format
 msgid "%(name)s was deleted."
 msgstr "%(name)s fue eliminado."
+
+#, python-format
+msgid "Booking cancelled. We let %(name)s know by email."
+msgstr "Reserva cancelada. Le avisamos a %(name)s por correo."
+
+msgid "You are on the Pro plan. There is no booking limit now."
+msgstr "Ahora tienes el plan Pro. Ya no hay límite de reservas."
+
+msgid "You are back on the Free plan."
+msgstr "Volviste al plan Free."
 
 msgid "This address is already taken."
 msgstr "Esta dirección ya está en uso."
@@ -174,6 +184,18 @@ msgstr "Los bloques de un mismo día no pueden cruzarse."
 
 msgid "Use times on the hour or half hour, up to 23:30."
 msgstr "Usa horas en punto o y media, hasta las 23:30."
+
+#, python-format
+msgid "Your booking at %(business)s"
+msgstr "Tu reserva en %(business)s"
+
+#, python-format
+msgid "Today: %(service)s at %(business)s"
+msgstr "Hoy: %(service)s en %(business)s"
+
+#, python-format
+msgid "Cancelled: %(service)s at %(business)s"
+msgstr "Cancelada: %(service)s en %(business)s"
 
 msgid "Reservini gives small businesses a booking page where clients pick a free time."
 msgstr "Reservini le da a los negocios pequeños una página de reservas donde sus clientes eligen una hora libre."
@@ -281,8 +303,32 @@ msgstr "¿Ya tienes cuenta?"
 msgid "%(minutes)d min"
 msgstr "%(minutes)d min"
 
+msgid "This business is not taking new bookings this month. Please try again later."
+msgstr "Este negocio no está tomando reservas nuevas este mes. Inténtalo más adelante."
+
 msgid "Pick a day"
 msgstr "Elige un día"
+
+#, python-format
+msgid "%(num)d free"
+msgid_plural "%(num)d free"
+msgstr[0] "%(num)d libre"
+msgstr[1] "%(num)d libres"
+
+msgid "Time of day"
+msgstr "Momento del día"
+
+msgid "All day"
+msgstr "Todo el día"
+
+msgid "Morning"
+msgstr "Mañana"
+
+msgid "Afternoon"
+msgstr "Tarde"
+
+msgid "Evening"
+msgstr "Noche"
 
 msgid "Pick a time"
 msgstr "Elige una hora"
@@ -290,14 +336,17 @@ msgstr "Elige una hora"
 msgid "Booked"
 msgstr "Reservado"
 
-msgid "Closed"
-msgstr "Cerrado"
+msgid "No free times this day. Try another day."
+msgstr "No hay horas libres este día. Prueba otro día."
+
+msgid "We will email you a confirmation and a reminder on the morning of your booking."
+msgstr "Te enviaremos un correo de confirmación y un recordatorio la mañana de tu reserva."
 
 msgid "Confirm booking"
 msgstr "Confirmar reserva"
 
-msgid "No free times this day. Try another day."
-msgstr "No hay horas libres este día. Prueba otro día."
+msgid "No free times in the next two weeks."
+msgstr "No hay horas libres en las próximas dos semanas."
 
 msgid "Pick a service to see the free times."
 msgstr "Elige un servicio para ver las horas libres."
@@ -367,6 +416,42 @@ msgstr "Tu página de reservas"
 msgid "Edit business"
 msgstr "Editar negocio"
 
+msgid "Pro plan"
+msgstr "Plan Pro"
+
+#, python-format
+msgid "Unlimited bookings. %(count)d this month."
+msgstr "Reservas ilimitadas. %(count)d este mes."
+
+msgid "Free plan"
+msgstr "Plan Free"
+
+#, python-format
+msgid "%(count)d of %(limit)d bookings used this month."
+msgstr "%(count)d de %(limit)d reservas usadas este mes."
+
+msgid "Switch to Free"
+msgstr "Cambiar a Free"
+
+msgid "Upgrade to Pro"
+msgstr "Pasar a Pro"
+
+msgid "Demo: no payment is taken."
+msgstr "Demo: no se cobra nada."
+
+msgid "Upcoming bookings"
+msgstr "Próximas reservas"
+
+#, python-format
+msgid "Cancel booking of %(name)s"
+msgstr "Cancelar la reserva de %(name)s"
+
+msgid "Cancel booking"
+msgstr "Cancelar reserva"
+
+msgid "No upcoming bookings yet. Share your booking page to get the first one."
+msgstr "Todavía no hay reservas. Comparte tu página de reservas para recibir la primera."
+
 msgid "Services"
 msgstr "Servicios"
 
@@ -403,4 +488,27 @@ msgstr "Eliminar"
 
 msgid "Add your first service so clients have something to book."
 msgstr "Agrega tu primer servicio para que tus clientes tengan algo que reservar."
+
+#, python-format
+msgid "Hi %(name)s,"
+msgstr "Hola, %(name)s:"
+
+#, python-format
+msgid "Your booking was cancelled by %(business)s."
+msgstr "%(business)s canceló tu reserva."
+
+msgid "You can book another time from their booking page."
+msgstr "Puedes reservar otra hora desde su página de reservas."
+
+msgid "Your booking is confirmed."
+msgstr "Tu reserva está confirmada."
+
+msgid "We will send you a reminder on the morning of your booking."
+msgstr "Te enviaremos un recordatorio la mañana de tu reserva."
+
+msgid "This is a reminder that you have a booking today."
+msgstr "Te recordamos que hoy tienes una reserva."
+
+msgid "See you soon."
+msgstr "¡Nos vemos pronto!"
 

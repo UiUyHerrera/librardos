@@ -5,7 +5,9 @@ import pytest
 from sqlalchemy import func, select
 
 from reservini.extensions import db
-from reservini.models import Booking, Business, OpeningHours, Service, utc_now
+from reservini.models import Booking, BookingStatus, Business, OpeningHours, Plan, Service, User, utc_now
+from reservini.notifications import send_due_reminders
+from reservini.plans import FREE_MONTHLY_BOOKINGS
 from reservini.scheduling import available_slots, bookable_days, day_timeline, to_database_time
 
 WEDNESDAY = date(2026, 1, 14)
@@ -36,6 +38,7 @@ def haircut(business):
 
 def add_booking(business, service, starts_at):
     booking = Booking(
+        created_at=LONG_AGO,
         business=business,
         service=service,
         customer_name="Sam Rivera",
@@ -143,3 +146,148 @@ def test_the_same_time_cannot_be_booked_twice(client, business, haircut):
 
     assert second.status_code == 200
     assert db.session.scalar(select(func.count(Booking.id))) == 1
+
+
+@pytest.fixture
+def outbox(monkeypatch):
+    sent = []
+    monkeypatch.setattr("reservini.mailer.deliver", sent.append)
+    return sent
+
+
+def test_booking_sends_a_confirmation_email(client, business, haircut, outbox):
+    url = tomorrow_url(business, haircut)
+
+    book(client, url, first_slot_value(client.get(url)))
+
+    assert len(outbox) == 1
+    assert outbox[0]["To"] == "ana@example.com"
+    assert outbox[0]["Subject"] == "Your booking at North Side Barbers"
+    assert "Haircut" in outbox[0].get_content()
+
+
+def test_confirmation_email_uses_the_language_of_the_booking(client, business, haircut, outbox):
+    client.get("/language/es")
+    url = tomorrow_url(business, haircut)
+
+    book(client, url, first_slot_value(client.get(url)))
+
+    assert outbox[0]["Subject"] == "Tu reserva en North Side Barbers"
+
+
+def booking_on_wednesday(business, service):
+    start = available_slots(business, service, WEDNESDAY, LONG_AGO)[2]
+    add_booking(business, service, start)
+    return db.session.scalar(select(Booking))
+
+
+def test_reminder_is_sent_once_on_the_morning_of_the_booking(business, haircut, outbox):
+    booking = booking_on_wednesday(business, haircut)
+    seven_in_new_york = datetime(2026, 1, 14, 12, 0, tzinfo=UTC)
+    eight_thirty_in_new_york = datetime(2026, 1, 14, 13, 30, tzinfo=UTC)
+
+    assert send_due_reminders(seven_in_new_york) == 0
+    assert send_due_reminders(eight_thirty_in_new_york) == 1
+    assert send_due_reminders(eight_thirty_in_new_york) == 0
+    assert booking.reminder_sent_at is not None
+    assert outbox[0]["Subject"] == "Today: Haircut at North Side Barbers"
+
+
+def test_cancelled_bookings_get_no_reminder(business, haircut, outbox):
+    booking = booking_on_wednesday(business, haircut)
+    booking.status = BookingStatus.CANCELLED
+    db.session.commit()
+
+    assert send_due_reminders(datetime(2026, 1, 14, 13, 30, tzinfo=UTC)) == 0
+
+
+def test_failed_email_does_not_break_the_booking(client, business, haircut, monkeypatch):
+    def broken_server(message):
+        raise OSError("mail server down")
+
+    monkeypatch.setattr("reservini.mailer.deliver", broken_server)
+    url = tomorrow_url(business, haircut)
+
+    response = book(client, url, first_slot_value(client.get(url)))
+
+    assert response.headers["Location"] == "/b/north-side/confirmation"
+
+
+def log_in_as_owner(client):
+    client.post("/login", data={"email": "owner@example.com", "password": "correct-horse"})
+
+
+def upcoming_booking(business, service):
+    start = available_slots(business, service, bookable_days(business, utc_now())[1], utc_now())[0]
+    add_booking(business, service, start)
+    return db.session.scalar(select(Booking))
+
+
+def test_owner_sees_upcoming_bookings(client, business, haircut):
+    upcoming_booking(business, haircut)
+    log_in_as_owner(client)
+
+    response = client.get("/dashboard/")
+
+    assert b"Sam Rivera" in response.data
+    assert b"sam@example.com" in response.data
+
+
+def test_owner_can_cancel_a_booking_and_the_client_is_told(client, business, haircut, outbox):
+    booking = upcoming_booking(business, haircut)
+    log_in_as_owner(client)
+
+    client.post(f"/dashboard/bookings/{booking.id}/cancel")
+
+    assert booking.status == BookingStatus.CANCELLED
+    assert outbox[0]["Subject"] == "Cancelled: Haircut at North Side Barbers"
+    assert b"booking-row" not in client.get("/dashboard/").data
+
+
+def test_owner_cannot_cancel_another_business_booking(client, business, haircut):
+    booking = upcoming_booking(business, haircut)
+    other = User(email="other@example.com")
+    other.set_password("correct-horse")
+    db.session.add(other)
+    db.session.commit()
+    client.post("/login", data={"email": "other@example.com", "password": "correct-horse"})
+
+    assert client.post(f"/dashboard/bookings/{booking.id}/cancel").status_code == 404
+    assert booking.status == BookingStatus.CONFIRMED
+
+
+def fill_free_plan(business, service):
+    start = datetime(2030, 1, 1, 9, 0, tzinfo=UTC)
+    for number in range(FREE_MONTHLY_BOOKINGS):
+        slot_start = start + timedelta(hours=number)
+        db.session.add(
+            Booking(
+                business=business,
+                service=service,
+                customer_name="Client",
+                customer_email="client@example.com",
+                starts_at=to_database_time(slot_start),
+                ends_at=to_database_time(slot_start + timedelta(minutes=30)),
+            )
+        )
+    db.session.commit()
+
+
+def test_free_plan_stops_taking_bookings_after_the_monthly_limit(client, business, haircut):
+    fill_free_plan(business, haircut)
+
+    response = client.get(tomorrow_url(business, haircut))
+
+    assert b"not taking new bookings this month" in response.data
+    assert b'name="slot"' not in response.data
+
+
+def test_pro_plan_has_no_limit(client, business, haircut):
+    fill_free_plan(business, haircut)
+    log_in_as_owner(client)
+    client.post("/dashboard/plan/pro")
+
+    response = client.get(tomorrow_url(business, haircut))
+
+    assert business.plan == Plan.PRO
+    assert b'name="slot"' in response.data

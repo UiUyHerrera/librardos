@@ -1,0 +1,9 @@
+{{ _("Hi %(name)s,", name=booking.customer_name) }}
+
+{{ _("This is a reminder that you have a booking today.") }}
+
+{{ booking.service.name }}
+{{ booking.business.name }}
+{{ booking.starts_at|local_time(booking.business) }} ({{ booking.business.timezone }})
+
+{{ _("See you soon.") }}
