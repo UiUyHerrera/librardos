@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 23:07-0300\n"
+"POT-Creation-Date: 2026-10-10 02:51-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -385,11 +385,29 @@ msgstr "tu-negocio"
 msgid "Opening hours"
 msgstr "Horario de atención"
 
+msgid "Closed"
+msgstr "Cerrado"
+
+msgid "from"
+msgstr "desde"
+
+msgid "to"
+msgstr "a"
+
+msgid "Add hours"
+msgstr "Agregar horario"
+
+msgid "Copy to all open days"
+msgstr "Copiar a los días abiertos"
+
+msgid "Copied"
+msgstr "Copiado"
+
 msgid "Remove"
 msgstr "Quitar"
 
-msgid "Drag down on a day to add hours. Drag a block to move it, pull its bottom edge to resize it, or press × to remove it."
-msgstr "Arrastra hacia abajo en un día para agregar horas. Arrastra un bloque para moverlo, tira de su borde inferior para cambiar su largo o toca × para quitarlo."
+msgid "Turn on the days you work and set your hours. Add a second block for breaks, like lunch."
+msgstr "Activa los días que atiendes y elige tu horario. Agrega un segundo bloque si haces pausas, como el almuerzo."
 
 msgid "Edit as text"
 msgstr "Editar como texto"

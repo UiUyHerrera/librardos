@@ -6,16 +6,15 @@
 
   const STEP = 30;
   const LAST_MINUTE = 23 * 60 + 30;
-  const ROW_HEIGHT = 18;
+  const DEFAULT_RANGE = { start: 9 * 60, end: 18 * 60 };
   const RANGE = /^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/;
+  const labels = editor.dataset;
 
-  const grid = editor.querySelector("[data-hours-grid]");
+  const list = editor.querySelector("[data-hours-list]");
   const textEditor = document.querySelector("[data-hours-text]");
   const inputs = [...document.querySelectorAll('input[name^="hours-"]')];
   const dayNames = inputs.map((input) => document.querySelector(`label[for="${input.id}"]`).textContent.trim());
   const week = inputs.map((input) => parseRanges(input.value));
-  const columns = [];
-  let drag = null;
 
   function toMinutes(hours, minutes) {
     return Number(hours) * 60 + Number(minutes);
@@ -35,173 +34,141 @@
     return `${hours}:${String(minutes % 60).padStart(2, "0")}`;
   }
 
-  function formatRange(range) {
-    return `${formatTime(range.start)}-${formatTime(range.end)}`;
-  }
-
-  function merge(ranges) {
-    const sorted = [...ranges].sort((first, second) => first.start - second.start);
-    return sorted.reduce((merged, range) => {
-      const last = merged[merged.length - 1];
-      if (last && range.start <= last.end) {
-        last.end = Math.max(last.end, range.end);
-      } else {
-        merged.push({ ...range });
-      }
-      return merged;
-    }, []);
-  }
-
   function save(day) {
-    week[day] = merge(week[day]);
-    inputs[day].value = week[day].map(formatRange).join(", ");
-  }
-
-  function minuteAt(column, clientY) {
-    const offset = clientY - column.getBoundingClientRect().top;
-    const minute = Math.floor(offset / ROW_HEIGHT) * STEP;
-    return Math.min(Math.max(minute, 0), LAST_MINUTE - STEP);
+    week[day].sort((first, second) => first.start - second.start);
+    inputs[day].value = week[day].map((range) => `${formatTime(range.start)}-${formatTime(range.end)}`).join(", ");
   }
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
-    node.className = className;
+    if (className) {
+      node.className = className;
+    }
     if (text) {
       node.textContent = text;
     }
     return node;
   }
 
-  function blockElement(day, index, range) {
-    const block = element("div", "hours-block");
-    block.dataset.index = index;
-    block.style.top = `${(range.start / STEP) * ROW_HEIGHT}px`;
-    block.style.height = `${((range.end - range.start) / STEP) * ROW_HEIGHT}px`;
+  function timeSelect(value, from, to, label) {
+    const select = element("select", "hours-time-select");
+    select.setAttribute("aria-label", label);
+    for (let minute = from; minute <= to; minute += STEP) {
+      const option = element("option", "", formatTime(minute));
+      option.value = minute;
+      option.selected = minute === value;
+      select.append(option);
+    }
+    return select;
+  }
 
-    const label = element("span", "hours-block-label");
-    label.append(element("span", "", formatTime(range.start)), element("span", "", formatTime(range.end)));
-    const remove = element("button", "hours-block-remove", "×");
-    remove.type = "button";
-    remove.dataset.remove = "";
-    remove.setAttribute("aria-label", `${editor.dataset.removeLabel} ${dayNames[day]} ${formatRange(range)}`);
-    const handle = element("span", "hours-block-handle");
-    handle.dataset.resize = "";
+  function nextRange(day) {
+    const last = week[day][week[day].length - 1];
+    if (!last) {
+      return { ...DEFAULT_RANGE };
+    }
+    const start = Math.min(last.end + 60, LAST_MINUTE - STEP);
+    return { start, end: Math.min(start + 4 * 60, LAST_MINUTE) };
+  }
 
-    block.append(label, remove, handle);
-    return block;
+  function rangeRow(day, index, range) {
+    const row = element("div", "hours-range");
+    const from = timeSelect(range.start, 0, LAST_MINUTE - STEP, `${dayNames[day]}, ${labels.fromLabel}`);
+    const to = timeSelect(range.end, range.start + STEP, LAST_MINUTE, `${dayNames[day]}, ${labels.toLabel}`);
+
+    from.addEventListener("change", () => {
+      range.start = Number(from.value);
+      range.end = Math.max(range.end, range.start + STEP);
+      save(day);
+      renderDay(day);
+    });
+    to.addEventListener("change", () => {
+      range.end = Number(to.value);
+      save(day);
+    });
+
+    row.append(from, element("span", "hours-range-separator", labels.toLabel), to);
+
+    if (week[day].length > 1) {
+      const remove = element("button", "hours-icon-button", "×");
+      remove.type = "button";
+      remove.setAttribute("aria-label", `${labels.removeLabel} ${formatTime(range.start)}`);
+      remove.addEventListener("click", () => {
+        week[day].splice(index, 1);
+        save(day);
+        renderDay(day);
+      });
+      row.append(remove);
+    }
+    return row;
   }
 
   function renderDay(day) {
-    columns[day].replaceChildren(...week[day].map((range, index) => blockElement(day, index, range)));
-  }
+    const row = list.children[day];
+    const isOpen = week[day].length > 0;
+    row.classList.toggle("is-closed", !isOpen);
+    row.querySelector("input[role=switch]").checked = isOpen;
+    row.querySelector(".hours-day-status").textContent = labels.closedLabel;
 
-  function build() {
-    const head = element("div", "hours-head");
-    head.append(element("span", "hours-corner"));
-    dayNames.forEach((name) => head.append(element("span", "hours-day-name", name.slice(0, 3))));
-
-    const body = element("div", "hours-body");
-    const times = element("div", "hours-times");
-    for (let minute = 0; minute < LAST_MINUTE; minute += 60) {
-      const label = element("span", "hours-time", formatTime(minute));
-      label.style.top = `${(minute / STEP) * ROW_HEIGHT}px`;
-      times.append(label);
+    const ranges = row.querySelector(".hours-ranges");
+    if (!isOpen) {
+      ranges.replaceChildren();
+      return;
     }
-    body.append(times);
 
-    dayNames.forEach((_name, day) => {
-      const column = element("div", "hours-day");
-      column.dataset.day = day;
-      column.style.height = `${(LAST_MINUTE / STEP) * ROW_HEIGHT}px`;
-      columns.push(column);
-      body.append(column);
+    const add = element("button", "hours-link-button", labels.addLabel);
+    add.type = "button";
+    add.disabled = nextRange(day).start <= week[day][week[day].length - 1].end;
+    add.addEventListener("click", () => {
+      week[day].push(nextRange(day));
+      save(day);
+      renderDay(day);
     });
 
-    const scroller = element("div", "hours-scroll");
-    scroller.append(head, body);
-    grid.replaceChildren(scroller);
-    week.forEach((_ranges, day) => renderDay(day));
-    scroller.scrollTop = (7 * 60 / STEP) * ROW_HEIGHT;
+    const copy = element("button", "hours-link-button", labels.copyLabel);
+    copy.type = "button";
+    copy.addEventListener("click", () => {
+      week.forEach((_ranges, otherDay) => {
+        if (otherDay !== day && week[otherDay].length > 0) {
+          week[otherDay] = week[day].map((range) => ({ ...range }));
+          save(otherDay);
+          renderDay(otherDay);
+        }
+      });
+      copy.textContent = labels.copiedLabel;
+    });
+
+    const actions = element("div", "hours-actions");
+    actions.append(add, copy);
+    ranges.replaceChildren(...week[day].map((range, index) => rangeRow(day, index, range)), actions);
   }
 
-  grid.addEventListener("pointerdown", (event) => {
-    const column = event.target.closest(".hours-day");
-    if (!column || event.target.closest("[data-remove]")) {
-      return;
-    }
-
-    const day = Number(column.dataset.day);
-    const minute = minuteAt(column, event.clientY);
-    const block = event.target.closest(".hours-block");
-
-    if (block) {
-      const range = week[day][Number(block.dataset.index)];
-      const mode = event.target.closest("[data-resize]") ? "resize" : "move";
-      drag = { day, column, range, mode, offset: minute - range.start };
-    } else {
-      const range = { start: minute, end: minute + STEP };
-      week[day].push(range);
-      drag = { day, column, range, mode: "create", anchor: minute };
+  function dayRow(day) {
+    const row = element("div", "hours-day-row");
+    const toggle = element("label", "hours-switch");
+    const checkbox = element("input");
+    checkbox.type = "checkbox";
+    checkbox.setAttribute("role", "switch");
+    checkbox.addEventListener("change", () => {
+      week[day] = checkbox.checked ? [{ ...DEFAULT_RANGE }] : [];
+      save(day);
       renderDay(day);
-    }
+    });
+    toggle.append(checkbox, element("span", "hours-switch-track"), element("span", "hours-day-name", dayNames[day]));
 
-    column.setPointerCapture(event.pointerId);
-    event.preventDefault();
-  });
-
-  grid.addEventListener("pointermove", (event) => {
-    if (!drag) {
-      return;
-    }
-
-    const minute = minuteAt(drag.column, event.clientY);
-    const { range } = drag;
-
-    if (drag.mode === "create") {
-      range.start = Math.min(drag.anchor, minute);
-      range.end = Math.max(drag.anchor, minute) + STEP;
-    } else if (drag.mode === "resize") {
-      range.end = Math.max(range.start + STEP, minute + STEP);
-    } else {
-      const length = range.end - range.start;
-      range.start = Math.min(Math.max(minute - drag.offset, 0), LAST_MINUTE - length);
-      range.end = range.start + length;
-    }
-
-    renderDay(drag.day);
-  });
-
-  function finishDrag() {
-    if (!drag) {
-      return;
-    }
-    save(drag.day);
-    renderDay(drag.day);
-    drag = null;
+    row.append(toggle, element("span", "hours-day-status"), element("div", "hours-ranges"));
+    return row;
   }
-
-  grid.addEventListener("pointerup", finishDrag);
-  grid.addEventListener("pointercancel", finishDrag);
-
-  grid.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-remove]");
-    if (!button) {
-      return;
-    }
-    const day = Number(button.closest(".hours-day").dataset.day);
-    week[day].splice(Number(button.closest(".hours-block").dataset.index), 1);
-    save(day);
-    renderDay(day);
-  });
 
   inputs.forEach((input, day) => {
+    list.append(dayRow(day));
     input.addEventListener("change", () => {
       week[day] = parseRanges(input.value);
       renderDay(day);
     });
   });
+  week.forEach((_ranges, day) => renderDay(day));
 
   editor.hidden = false;
   textEditor.open = false;
-  build();
 })();

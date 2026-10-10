@@ -15,9 +15,16 @@
     <fieldset class="hours-fieldset">
       <legend>{{ _("Opening hours") }}</legend>
 
-      <div class="hours-editor" data-hours-editor data-remove-label="{{ _('Remove') }}" hidden>
-        <p class="field-hint">{{ _("Drag down on a day to add hours. Drag a block to move it, pull its bottom edge to resize it, or press × to remove it.") }}</p>
-        <div class="hours-grid" data-hours-grid></div>
+      <div class="hours-editor" data-hours-editor hidden
+        data-closed-label="{{ _('Closed') }}"
+        data-from-label="{{ _('from') }}"
+        data-to-label="{{ _('to') }}"
+        data-add-label="{{ _('Add hours') }}"
+        data-copy-label="{{ _('Copy to all open days') }}"
+        data-copied-label="{{ _('Copied') }}"
+        data-remove-label="{{ _('Remove') }}">
+        <p class="field-hint">{{ _("Turn on the days you work and set your hours. Add a second block for breaks, like lunch.") }}</p>
+        <div class="hours-list" data-hours-list></div>
       </div>
 
       <details class="hours-text" data-hours-text open>
