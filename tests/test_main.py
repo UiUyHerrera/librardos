@@ -1,4 +1,7 @@
+from reservini import create_app
 from reservini.config import database_url
+from reservini.stored_secrets import stored_secret
+from tests.conftest import TestingConfig
 
 
 def test_home_page_loads(client):
@@ -48,3 +51,14 @@ def test_reminder_task_runs_with_the_secret(app, client):
 
     assert response.status_code == 200
     assert response.json == {"sent": 0}
+
+
+def test_missing_secret_key_is_generated_and_kept_in_the_database():
+    class NoSecretConfig(TestingConfig):
+        SECRET_KEY = None
+
+    app = create_app(NoSecretConfig)
+
+    with app.app_context():
+        assert len(app.config["SECRET_KEY"]) == 64
+        assert stored_secret("flask_secret_key") == app.config["SECRET_KEY"]
