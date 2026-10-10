@@ -47,6 +47,9 @@ def create_app(config_class=Config):
     app.cli.add_command(init_db_command)
     app.cli.add_command(send_reminders_command)
 
+    with app.app_context():
+        db.create_all()
+
     return app
 
 

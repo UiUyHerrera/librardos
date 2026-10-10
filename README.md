@@ -38,11 +38,9 @@ Set `SECRET_KEY` in `.env` to a long random value:
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Create the database, compile the translations and start the server:
+Start the server. The database is created on the first start:
 
 ```bash
-flask init-db
-pybabel compile -d reservini/translations
 flask run
 ```
 
@@ -76,8 +74,10 @@ In production, Vercel calls `/tasks/send-reminders` once a day. The route only r
 
 The app runs on Vercel with a PostgreSQL database on Neon.
 
-1. Create the tables once from your computer, with `DATABASE_URL` set to the Neon connection string: `flask init-db`.
-2. Import the repository in Vercel.
-3. Add these environment variables in Vercel: `SECRET_KEY`, `DATABASE_URL`, `TRUST_PROXY=1`, `CRON_SECRET` and, to send emails, the `MAIL_*` values.
+1. Import the repository in Vercel.
+2. Connect a Neon database from the Storage tab, which adds `DATABASE_URL`.
+3. Add these environment variables: `SECRET_KEY`, `CRON_SECRET`, `TRUST_PROXY=1` and, to send emails, the `MAIL_*` values.
+
+The tables are created on the first start.
 
 `vercel.json` sends every request to `api/index.py` and schedules the daily reminders.
