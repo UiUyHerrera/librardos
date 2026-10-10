@@ -199,7 +199,7 @@ def test_owner_cannot_delete_another_owners_service(owner_client, business, othe
     assert db.session.get(Service, other_service.id) is not None
 
 
-def test_time_zones_are_shown_with_offset_and_city(owner_client):
+def test_time_zones_are_shown_with_offset_and_country(owner_client):
     response = owner_client.get("/dashboard/business/new")
 
-    assert '<option value="America/Montevideo">(UTC−03:00) Montevideo</option>' in response.text
+    assert '<option value="America/Montevideo">(UTC−03:00) Uruguay</option>' in response.text

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Reservini 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 02:51-0300\n"
+"POT-Creation-Date: 2026-10-10 03:00-0300\n"
 "PO-Revision-Date: 2026-10-08 14:36-0300\n"
 "Last-Translator: Reservini\n"
 "Language: es\n"
@@ -111,6 +111,27 @@ msgstr "Recarga la página y vuelve a intentarlo."
 
 msgid "Log in to see this page."
 msgstr "Inicia sesión para ver esta página."
+
+msgid "United States, Pacific"
+msgstr "Estados Unidos, Pacífico"
+
+msgid "United States, Mountain"
+msgstr "Estados Unidos, Montaña"
+
+msgid "United States, Central"
+msgstr "Estados Unidos, Centro"
+
+msgid "United States, Eastern"
+msgstr "Estados Unidos, Este"
+
+msgid "Argentina"
+msgstr "Argentina"
+
+msgid "Brazil"
+msgstr "Brasil"
+
+msgid "Uruguay"
+msgstr "Uruguay"
 
 msgid "Email"
 msgstr "Correo electrónico"

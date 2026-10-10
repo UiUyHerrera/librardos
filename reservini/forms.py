@@ -2,7 +2,7 @@ from datetime import UTC, date, datetime
 from functools import lru_cache
 from zoneinfo import ZoneInfo
 
-from babel.dates import get_day_names, get_timezone_location
+from babel.dates import get_day_names
 from babel.numbers import get_currency_name
 from flask_babel import get_locale
 from flask_babel import gettext as _
@@ -39,44 +39,16 @@ PASSWORD_MAX_LENGTH = 128
 SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "MXN", "BRL", "ARS", "COP", "PEN"]
 DEFAULT_HOURS = ["09:00-18:00"] * 5 + ["", ""]
-TIMEZONES = [
-    "Pacific/Honolulu",
-    "America/Anchorage",
-    "America/Los_Angeles",
-    "America/Denver",
-    "America/Phoenix",
-    "America/Chicago",
-    "America/Mexico_City",
-    "America/New_York",
-    "America/Bogota",
-    "America/Lima",
-    "America/Caracas",
-    "America/La_Paz",
-    "America/Santo_Domingo",
-    "America/Montevideo",
-    "America/Argentina/Buenos_Aires",
-    "America/Sao_Paulo",
-    "Europe/London",
-    "Europe/Lisbon",
-    "Europe/Madrid",
-    "Europe/Paris",
-    "Europe/Berlin",
-    "Europe/Rome",
-    "Africa/Lagos",
-    "Europe/Athens",
-    "Africa/Cairo",
-    "Africa/Johannesburg",
-    "Europe/Istanbul",
-    "Europe/Moscow",
-    "Asia/Dubai",
-    "Asia/Kolkata",
-    "Asia/Bangkok",
-    "Asia/Singapore",
-    "Asia/Shanghai",
-    "Asia/Tokyo",
-    "Australia/Sydney",
-    "Pacific/Auckland",
-]
+TIMEZONES = {
+    "America/Los_Angeles": _l("United States, Pacific"),
+    "America/Denver": _l("United States, Mountain"),
+    "America/Chicago": _l("United States, Central"),
+    "America/New_York": _l("United States, Eastern"),
+    "America/Argentina/Buenos_Aires": _l("Argentina"),
+    "America/Sao_Paulo": _l("Brazil"),
+    "America/Montevideo": _l("Uruguay"),
+    "UTC": "UTC",
+}
 
 
 def normalize_email(value):
@@ -97,12 +69,8 @@ def format_offset(offset):
 @lru_cache(maxsize=8)
 def timezone_choices(locale_name, day):
     now = datetime.combine(day, datetime.min.time(), tzinfo=UTC)
-    zones = []
-    for zone in ["UTC", *TIMEZONES]:
-        offset = now.astimezone(ZoneInfo(zone)).utcoffset()
-        city = get_timezone_location(zone, locale=locale_name, return_city=True).split("/")[-1]
-        zones.append((offset, city, zone))
-    return [(zone, f"(UTC{format_offset(offset)}) {city}") for offset, city, zone in sorted(zones)]
+    zones = sorted((now.astimezone(ZoneInfo(zone)).utcoffset(), str(label), zone) for zone, label in TIMEZONES.items())
+    return [(zone, f"(UTC{format_offset(offset)}) {label}") for offset, label, zone in zones]
 
 
 def currency_label(code, locale):
